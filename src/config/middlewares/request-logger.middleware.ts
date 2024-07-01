@@ -4,31 +4,27 @@ import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class RequestLoggerMiddleware implements NestMiddleware {
-  private logger = new Logger('HTTP');
-
   use(request: Request, response: Response, next: NextFunction): void {
-    const { ip, method, body, query: queryParams, path: url } = request;
+    const { ip, method, body, query: queryParams, originalUrl: url } = request;
     const startTime = Date.now();
+    const context = 'HTTP';
 
-    const now = new Date().toLocaleString('pt-BR', {
-      timeZone: 'America/Sao_Paulo',
-    });
-
-    this.logger.debug(`Started ${method} "${url}" for ${ip} at ${now}`);
+    Logger.debug(`Started ${method} "${url}" for ${ip}`, context);
 
     if (Object.keys(body).length !== 0)
-      this.logger.debug(`Body: ${JSON.stringify(body)}`);
+      Logger.debug(`Body: ${JSON.stringify(body)}`, context);
 
     if (Object.keys(queryParams).length !== 0)
-      this.logger.debug(`QueryParams: ${JSON.stringify(queryParams)}`);
+      Logger.debug(`QueryParams: ${JSON.stringify(queryParams)}`, context);
 
     response.on('close', () => {
       const { statusCode } = response;
       const contentLength = response.get('content-length') || 0;
       const responseTime = Date.now() - startTime;
 
-      this.logger.debug(
+      Logger.debug(
         `Completed ${statusCode} with ${contentLength} bytes | ${responseTime}ms\n\n`,
+        context,
       );
     });
 
