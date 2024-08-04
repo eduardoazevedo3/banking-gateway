@@ -17,8 +17,10 @@ export class CustomerService {
     return await this.connection.manager.find(CustomerEntity);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+  async findOne(id: number): Promise<CustomerEntity> {
+    return await this.connection.manager.findOneByOrFail(CustomerEntity, {
+      id,
+    });
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
