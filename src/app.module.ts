@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BoletoModule } from './boleto/boleto.module';
 import configuration from './config/configuration';
 import { databaseAsyncOptions } from './config/database/database.config';
 import { RequestLoggerMiddleware } from './config/middlewares/request-logger.middleware';
@@ -13,6 +14,7 @@ import { CustomerModule } from './customer/customer.module';
     ConfigModule.forRoot({ load: [configuration] }),
     TypeOrmModule.forRootAsync(databaseAsyncOptions),
     CustomerModule,
+    BoletoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
