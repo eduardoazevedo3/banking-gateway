@@ -4,7 +4,7 @@ import {
   BoletoEntityTypeEnum,
   BoletoIssuingBankEnum,
   BoletoStatusEnum,
-} from '../interfaces/boleto.interface';
+} from '../enums/boleto.enum';
 
 @Entity('boletos')
 export class Boleto {

@@ -14,3 +14,7 @@ export enum BoletoEntityTypeEnum {
   CNPJ = 'CNPJ',
   CPF = 'CPF',
 }
+
+export enum BoletoNegativationAgencyEnum {
+  SERASA = 'SERASA',
+}

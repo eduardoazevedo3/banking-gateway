@@ -7,21 +7,27 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  Length,
+  Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 import {
   BoletoEntityTypeEnum,
   BoletoIssuingBankEnum,
+  BoletoNegativationAgencyEnum,
   BoletoStatusEnum,
-} from '../interfaces/boleto.interface';
+} from '../enums/boleto.enum';
 
 export class CreateBoletoDto {
   @ApiProperty({ example: '123456789' })
   @IsString()
+  @MaxLength(20)
   referenceCode: string;
 
   @ApiProperty({ example: '123456789' })
   @IsString()
+  @MaxLength(20)
   ourNumber: string;
 
   @ApiProperty({
@@ -80,26 +86,30 @@ export class CreateBoletoDto {
   @IsNumber()
   @IsOptional()
   @Min(1)
-  @Min(90)
+  @Max(90)
   protestDays?: number;
 
   @ApiPropertyOptional({ example: 30 })
   @IsNumber()
   @IsOptional()
   @Min(1)
-  @Min(90)
+  @Max(90)
   negativationDays?: number;
 
-  @ApiPropertyOptional({ example: 'SERASA' })
-  @IsString()
+  @ApiPropertyOptional({
+    enum: BoletoNegativationAgencyEnum,
+    enumName: 'BoletoNegativationAgencyEnum',
+    example: BoletoNegativationAgencyEnum.SERASA,
+  })
+  @IsEnum(BoletoNegativationAgencyEnum)
   @IsOptional()
-  negativationAgency?: string;
+  negativationAgency?: BoletoNegativationAgencyEnum;
 
   @ApiPropertyOptional({ example: 30 })
   @IsNumber()
   @IsOptional()
   @Min(1)
-  @Min(90)
+  @Max(90)
   receiptDaysLimit?: number;
 
   @ApiPropertyOptional({ example: '123' })
@@ -110,6 +120,7 @@ export class CreateBoletoDto {
   @ApiPropertyOptional({ example: 'Duplicata Mercantil' })
   @IsString()
   @IsOptional()
+  @MaxLength(50)
   boletoTypeDescription?: string;
 
   @ApiProperty({
@@ -122,10 +133,12 @@ export class CreateBoletoDto {
 
   @ApiProperty({ example: '123.345.567-09' })
   @IsString()
+  @Length(14, 18)
   beneficiaryDocument: string;
 
   @ApiProperty({ example: 'Alberto Santos' })
   @IsString()
+  @Length(3, 255)
   beneficiaryName: string;
 
   @ApiProperty({
@@ -138,37 +151,46 @@ export class CreateBoletoDto {
 
   @ApiProperty({ example: '123.345.567-09' })
   @IsString()
+  @Length(14, 18)
   payerDocument: string;
 
   @ApiProperty({ example: 'Alberto Santos' })
   @IsString()
+  @Length(3, 255)
   payerName: string;
 
   @ApiProperty({ example: 'Rua Floriano Peixoto' })
   @IsString()
+  @Length(3, 255)
   payerAddress: string;
 
   @ApiProperty({ example: '123 | S/N' })
   @IsString()
+  @Length(1, 20)
   payerAddressNumber: string;
 
   @ApiProperty({ example: '123' })
   @IsString()
+  @Length(9, 9)
   payerZipCode: string;
 
   @ApiProperty({ example: 'São Paulo' })
   @IsString()
+  @Length(3, 255)
   payerCity: string;
 
   @ApiProperty({ example: 'Centro' })
   @IsString()
+  @Length(3, 255)
   payerNeighborhood: string;
 
   @ApiProperty({ example: 'SP' })
   @IsString()
+  @Length(2, 2)
   payerState: string;
 
   @ApiProperty({ example: '(11) 99999-9999' })
   @IsString()
+  @Length(14, 15)
   payerPhone: string;
 }
