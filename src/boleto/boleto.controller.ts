@@ -9,6 +9,12 @@ import { Boleto } from './entities/boleto.entity';
 export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
+  @Get()
+  @ApiResponse({ status: 200, type: Array<Boleto> })
+  findAll(): Promise<Boleto[]> {
+    return this.boletoService.findAll();
+  }
+
   @Get(':id')
   @ApiResponse({ status: 200, type: Boleto })
   findOne(@Param('id') id: number): Promise<Boleto> {

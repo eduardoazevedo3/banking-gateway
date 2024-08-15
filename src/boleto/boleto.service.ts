@@ -7,6 +7,10 @@ import { Boleto } from './entities/boleto.entity';
 export class BoletoService {
   constructor(private connection: DataSource) {}
 
+  async findAll(): Promise<Boleto[]> {
+    return await this.connection.manager.find(Boleto);
+  }
+
   async findOne(id: number): Promise<Boleto> {
     return await this.connection.manager.findOneByOrFail(Boleto, { id });
   }
