@@ -1,6 +1,6 @@
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { AppConfigModule } from '../app-config.module';
-import { AppConfigService } from '../app-config.service';
+import { AppConfigModule } from './app-config.module';
+import { AppConfigService } from './app-config.service';
 
 export const databaseAsyncOptions: TypeOrmModuleAsyncOptions = {
   imports: [AppConfigModule],
@@ -17,7 +17,7 @@ export const databaseAsyncOptions: TypeOrmModuleAsyncOptions = {
       database: name,
       logging: true,
       synchronize: false,
-      entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     };
   },
 };
