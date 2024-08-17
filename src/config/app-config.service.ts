@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-type DatabaseConfig = {
+type TAppConfig = {
+  env: string;
+};
+
+type TDatabaseConfig = {
   host: string;
   port: number;
   name: string;
@@ -13,7 +17,11 @@ type DatabaseConfig = {
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
 
-  get database(): DatabaseConfig {
+  get app(): TAppConfig {
+    return { ...this.configService.get('app') };
+  }
+
+  get database(): TDatabaseConfig {
     return { ...this.configService.get('database') };
   }
 }

@@ -1,4 +1,7 @@
 export default () => ({
+  app: {
+    env: process.env.NODE_ENV || 'development',
+  },
   database: {
     host: process.env.DB_HOST,
     username: process.env.DB_USERNAME,
