@@ -15,4 +15,7 @@ export class AuthApiDto {
 
   @Expose({ name: 'id_token' })
   idToken: string;
+
+  @Expose()
+  scope: string;
 }

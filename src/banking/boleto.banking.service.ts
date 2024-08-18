@@ -7,8 +7,7 @@ import { IBoletoBanking } from './interfaces/boleto.banking.interface';
 export class BoletoBankingService implements IBoletoBanking {
   constructor(private readonly bancoBrasilService: BoletoBancoBrasilService) {}
 
-  async register(_boleto: Boleto): Promise<Boleto> {
-    console.log('Registering banking service...');
-    return null;
+  async register(boleto: Boleto): Promise<Boleto> {
+    return await this.bancoBrasilService.register(boleto);
   }
 }

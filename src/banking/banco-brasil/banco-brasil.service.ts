@@ -2,13 +2,13 @@ import { HttpService } from '@nestjs/axios';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject } from '@nestjs/common';
 import { Method } from 'axios';
-import { firstValueFrom } from 'rxjs';
+import { plainToClass } from 'class-transformer';
+import { catchError, firstValueFrom } from 'rxjs';
 import { AppConfigService } from '../../config/app-config.service';
+import { AuthBadRequestException } from '../exceptions/auth-bad-request.exception';
+import { AuthApiDto } from './dtos/auth-api.dto';
 
 export abstract class BancoBrasilService {
-  private readonly CLIENT_ID = 'client id';
-  private readonly CLIENT_SECRET = 'client secret';
-
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: AppConfigService,
@@ -27,14 +27,15 @@ export abstract class BancoBrasilService {
     path: string,
     payload: any,
   ): Promise<T> {
+    const bancoBrasilConfig = this.configService.banking.bancoBrasil;
     const credentials = await this.getCredentials();
     const response = await firstValueFrom(
-      this.httpService.request({
+      this.httpService.request<T>({
         method: method,
-        url: `${this.apiUrl}${path}?${this.appKeyName}=app_key`, // FIXME: Replace with actual values
+        url: `${this.apiUrl}${path}?${this.appKeyName}=${bancoBrasilConfig.appKey}`,
         params: payload,
         headers: {
-          Authorization: `${credentials.token_type} ${credentials.access_token}`,
+          Authorization: `${credentials.tokenType} ${credentials.accessToken}`,
         },
       }),
     );
@@ -42,28 +43,35 @@ export abstract class BancoBrasilService {
     return response.data;
   }
 
-  // TODO: Type the return of this method
-  private async authenticate(): Promise<object> {
+  private async authenticate(): Promise<AuthApiDto> {
     const response = await firstValueFrom(
-      this.httpService.post(`${this.oauthUrl}/oauth/token`, this.authPayload, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${this.encodedCredentials}`,
-        },
-      }),
+      this.httpService
+        .post<AuthApiDto>(`${this.oauthUrl}/oauth/token`, this.authPayload, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${this.encodedCredentials}`,
+          },
+        })
+        .pipe(
+          catchError((e) => {
+            if (e.code === 'ERR_BAD_REQUEST') {
+              throw new AuthBadRequestException(e.response.data);
+            }
+            throw e;
+          }),
+        ),
     );
 
-    const authData = response.data;
-    const expiresIn = authData.expires_in - 15;
+    const authData = plainToClass(AuthApiDto, response.data);
+    const expiresIn = (authData.expiresIn - 15) * 1000;
     await this.cacheManager.set(this.cacheKey, authData, expiresIn);
 
     return authData;
   }
 
-  // TODO: Type the return of this method
-  private async getCredentials(): Promise<any> {
+  private async getCredentials(): Promise<AuthApiDto> {
     const accessToken =
-      (await this.cacheManager.get<object>(this.cacheKey)) ||
+      (await this.cacheManager.get<AuthApiDto>(this.cacheKey)) ||
       (await this.authenticate());
 
     return accessToken;
@@ -90,9 +98,11 @@ export abstract class BancoBrasilService {
   }
 
   private get encodedCredentials(): string {
-    return Buffer.from(`${this.CLIENT_ID}:${this.CLIENT_SECRET}`).toString(
-      'base64',
-    );
+    const bancoBrasilConfig = this.configService.banking.bancoBrasil;
+
+    return Buffer.from(
+      `${bancoBrasilConfig.clientId}:${bancoBrasilConfig.clientSecret}`,
+    ).toString('base64');
   }
 
   private get authPayload(): object {

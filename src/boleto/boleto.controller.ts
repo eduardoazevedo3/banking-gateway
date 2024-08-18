@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthBadRequestException } from '../banking/exceptions/auth-bad-request.exception';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
@@ -9,21 +17,34 @@ import { Boleto } from './entities/boleto.entity';
 export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
+  @Get('register')
+  @ApiResponse({ status: 200, type: Boleto })
+  async register(): Promise<Boleto> {
+    try {
+      return await this.boletoService.register(null);
+    } catch (e) {
+      if (e instanceof AuthBadRequestException) {
+        throw new BadRequestException(e.message);
+      }
+      throw e;
+    }
+  }
+
   @Get()
   @ApiResponse({ status: 200, type: Array<Boleto> })
-  findAll(): Promise<Boleto[]> {
-    return this.boletoService.findAll();
+  async findAll(): Promise<Boleto[]> {
+    return await this.boletoService.findAll();
   }
 
   @Get(':id')
   @ApiResponse({ status: 200, type: Boleto })
-  findOne(@Param('id') id: number): Promise<Boleto> {
-    return this.boletoService.findOne(id);
+  async findOne(@Param('id') id: number): Promise<Boleto> {
+    return await this.boletoService.findOne(id);
   }
 
   @Post()
   @ApiResponse({ status: 201, type: Boleto })
-  create(@Body() boleto: CreateBoletoDto): Promise<Boleto> {
-    return this.boletoService.create(boleto);
+  async create(@Body() boleto: CreateBoletoDto): Promise<Boleto> {
+    return await this.boletoService.create(boleto);
   }
 }

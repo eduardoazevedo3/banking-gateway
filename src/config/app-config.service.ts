@@ -13,6 +13,16 @@ type TDatabaseConfig = {
   password: string;
 };
 
+type TBanking = {
+  bancoBrasil: TBancoBrasil;
+};
+
+type TBancoBrasil = {
+  appKey: string;
+  clientId: string;
+  clientSecret: string;
+};
+
 @Injectable()
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
@@ -23,5 +33,9 @@ export class AppConfigService {
 
   get database(): TDatabaseConfig {
     return { ...this.configService.get('database') };
+  }
+
+  get banking(): TBanking {
+    return { ...this.configService.get('banking') };
   }
 }

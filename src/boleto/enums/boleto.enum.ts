@@ -4,6 +4,7 @@ export enum BoletoStatusEnum {
   PAID = 'PAID',
   CANCELED = 'CANCELED',
   EXPIRED = 'EXPIRED',
+  REJECTED = 'REJECTED',
 }
 
 export enum BoletoIssuingBankEnum {

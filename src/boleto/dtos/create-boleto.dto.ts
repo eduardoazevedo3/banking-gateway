@@ -22,7 +22,7 @@ import {
 export class CreateBoletoDto {
   @ApiProperty({ example: '123456789' })
   @IsString()
-  @MaxLength(20)
+  @MaxLength(15)
   referenceCode: string;
 
   @ApiProperty({ example: '123456789' })
@@ -56,7 +56,7 @@ export class CreateBoletoDto {
 
   @ApiProperty({ example: '2024-08-10' })
   @IsDate()
-  expirationDate: Date;
+  dueDate: Date;
 
   @ApiProperty({ example: 100.0 })
   @IsDecimal()

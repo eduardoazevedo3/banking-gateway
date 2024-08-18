@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import {
   BoletoEntityTypeEnum,
   BoletoIssuingBankEnum,
@@ -7,7 +13,7 @@ import {
 } from '../enums/boleto.enum';
 
 @Entity('boletos')
-export class Boleto {
+export class Boleto<T = object> {
   @ApiProperty({ example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
@@ -38,15 +44,15 @@ export class Boleto {
 
   @ApiProperty({ example: { key: 'value' } })
   @Column('json', { name: 'issue_data' })
-  issueData: object;
+  issueData: T;
 
   @ApiProperty({ example: '2024-08-10' })
   @Column('varchar', { name: 'issue_date' })
   issueDate: Date;
 
   @ApiProperty({ example: '2024-08-10' })
-  @Column('varchar', { name: 'expiration_date' })
-  expirationDate: Date;
+  @Column('varchar', { name: 'due_date' })
+  dueDate: Date;
 
   @ApiProperty({ example: 100.0 })
   @Column('decimal')
@@ -151,4 +157,14 @@ export class Boleto {
   @ApiProperty({ example: '(11) 99999-9999' })
   @Column('varchar', { name: 'payer_phone' })
   payerPhone: string;
+
+  @ApiProperty({ example: 'Rejection boleto reason' })
+  @Column('text', { name: 'rejection_reason' })
+  rejectionReason?: string;
+
+  @CreateDateColumn({ type: 'datetime', name: 'created_at', precision: 3 })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'datetime', name: 'updated_at', precision: 3 })
+  updatedAt: Date;
 }

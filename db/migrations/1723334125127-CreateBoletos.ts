@@ -11,7 +11,7 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
 				issuing_bank VARCHAR(255) NOT NULL,
 				issue_data JSON NOT NULL,
 				issue_date DATE NOT NULL,
-				expiration_date DATE NOT NULL,
+				due_date DATE NOT NULL,
 				amount DECIMAL(10, 2) NOT NULL,
 				discount_amount DECIMAL(10, 2),
 				fine_amount DECIMAL(10, 2),
@@ -36,6 +36,7 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
 				payer_neighborhood VARCHAR(255) NOT NULL,
 				payer_state VARCHAR(255) NOT NULL,
 				payer_phone VARCHAR(255) NOT NULL,
+				rejection_reason TEXT,
 				created_at DATETIME(3) NOT NULL DEFAULT now(3),
 				updated_at DATETIME(3) NOT NULL DEFAULT now(3)
 			)

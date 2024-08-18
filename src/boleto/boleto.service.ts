@@ -12,11 +12,13 @@ export class BoletoService {
   ) {}
 
   async findAll(): Promise<Boleto[]> {
-    return await this.connection.manager.find(Boleto);
+    return await this.connection.manager.find(Boleto<object>);
   }
 
   async findOne(id: number): Promise<Boleto> {
-    return await this.connection.manager.findOneByOrFail(Boleto, { id });
+    return await this.connection.manager.findOneByOrFail(Boleto<object>, {
+      id,
+    });
   }
 
   async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
@@ -26,6 +28,7 @@ export class BoletoService {
   }
 
   async register(boleto): Promise<Boleto> {
+    console.log('[BoletoService] Registering boleto');
     return await this.boletoBankingService.register(boleto);
   }
 }
