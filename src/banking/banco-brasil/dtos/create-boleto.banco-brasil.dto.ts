@@ -12,13 +12,13 @@ import { PayerBoletoBancoBrasilDto } from './payer-boleto.banco-brasil.dto';
 
 export class CreateBoletoBancoBrasilDto {
   @Expose({ name: 'numeroConvenio' })
-  agreementNumber: number;
+  agreementNumber: string;
 
   @Expose({ name: 'numeroCarteira' })
-  walletNumber?: number;
+  walletNumber?: string;
 
   @Expose({ name: 'numeroVariacaoCarteira' })
-  walletVariationNumber?: number;
+  walletVariationNumber?: string;
 
   @Expose({ name: 'codigoModalidade' })
   modalityCode?: ModalityCodeBoletoBancoBrasilEnum;

@@ -7,6 +7,9 @@ import {
 } from '../../boleto/enums/boleto.enum';
 import { IBoletoBanking } from '../interfaces/boleto.banking.interface';
 import { BancoBrasilService } from './banco-brasil.service';
+import { CreateBoletoBancoBrasilDto } from './dtos/create-boleto.banco-brasil.dto';
+import { ModalityCodeBoletoBancoBrasilEnum } from './enums/modality-code-boleto.banco-brasil.enum';
+import { YesNoBoletoBancoBrasilEnum } from './enums/yes-no-boleto.banco-brasil.enum';
 import { TIssueDataBoleto } from './types/issue-data-boleto.type';
 
 @Injectable()
@@ -32,17 +35,22 @@ export class BoletoBancoBrasilService
     return boleto;
   }
 
-  private registerPayload(boleto: Boleto<TIssueDataBoleto>): object {
+  private registerPayload(
+    boleto: Boleto<TIssueDataBoleto>,
+  ): CreateBoletoBancoBrasilDto {
     return {
-      numeroConvenio: boleto.issueData.agreementNumber,
-      numeroCarteira: boleto.issueData.walletNumber,
-      numeroVariacaoCarteira: boleto.issueData.walletVariationNumber,
-      codigoModalidade: boleto.issueData.modalityCode,
-      dataEmissao: formatDate(boleto.issueDate, 'dd.MM.yyyy'),
-      dataVencimento: formatDate(boleto.dueDate, 'dd.MM.yyyy'),
-      valorOriginal: boleto.amount,
-      quantidadeDiasProtesto: boleto.protestDays,
-      indicadorAceiteTituloVencido: boleto.receiptDaysLimit ? 'S' : 'N',
+      agreementNumber: boleto.issueData.agreementNumber,
+      walletNumber: boleto.issueData.walletNumber,
+      walletVariationNumber: boleto.issueData.walletVariationNumber,
+      modalityCode: boleto.issueData
+        .modalityCode as ModalityCodeBoletoBancoBrasilEnum,
+      issueDate: formatDate(boleto.issueDate, 'dd.MM.yyyy'),
+      dueDate: formatDate(boleto.dueDate, 'dd.MM.yyyy'),
+      amount: boleto.amount,
+      protestDays: boleto.protestDays,
+      acceptExpiredBoleto: boleto.receiptDaysLimit
+        ? YesNoBoletoBancoBrasilEnum.YES
+        : YesNoBoletoBancoBrasilEnum.NO,
       numeroDiasLimiteRecebimento: boleto.receiptDaysLimit,
       codigoAceite: 'A',
       codigoTipoTitulo: boleto.boletoTypeCode,
