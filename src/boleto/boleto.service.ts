@@ -28,7 +28,6 @@ export class BoletoService {
   }
 
   async register(boleto): Promise<Boleto> {
-    console.log('[BoletoService] Registering boleto');
     return await this.boletoBankingService.register(boleto);
   }
 }

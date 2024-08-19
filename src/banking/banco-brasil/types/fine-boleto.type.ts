@@ -1,7 +1,7 @@
-import { FineTypeBoletoEnum } from '../enums/fine-type-boleto.enum';
+import { FineTypeBoletoBancoBrasilEnum } from '../enums/fine-type-boleto.banco-brasil.enum';
 
 export type TFineBoleto = {
-  type: FineTypeBoletoEnum;
+  type: FineTypeBoletoBancoBrasilEnum;
   percentage?: number;
   amount?: number;
 };

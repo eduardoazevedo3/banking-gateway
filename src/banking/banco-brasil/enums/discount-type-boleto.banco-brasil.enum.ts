@@ -1,4 +1,4 @@
-export enum DiscountTypeBoletoEnum {
+export enum DiscountTypeBoletoBancoBrasilEnum {
   NONE = 0,
   FIXED_AMOUNT = 1,
   PERCENTAGE = 2,
