@@ -7,7 +7,7 @@ export type TIssueDataBoleto = {
   walletNumber: string;
   walletVariationNumber: string;
   modalityCode: string;
-  discount: TDiscountBoleto;
-  interest: TInterestBoleto;
-  fine: TFineBoleto;
+  discount?: TDiscountBoleto;
+  interest?: TInterestBoleto;
+  fine?: TFineBoleto;
 };

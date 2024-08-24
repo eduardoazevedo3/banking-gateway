@@ -17,11 +17,12 @@ import { Boleto } from './entities/boleto.entity';
 export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
-  @Get('register')
+  @Get(':id/register')
   @ApiResponse({ status: 200, type: Boleto })
-  async register(): Promise<Boleto> {
+  async register(@Param('id') id: number): Promise<Boleto> {
     try {
-      return await this.boletoService.register(null);
+      const boleto = await this.boletoService.findOne(id);
+      return await this.boletoService.register(boleto);
     } catch (e) {
       if (e instanceof AuthBadRequestException) {
         throw new BadRequestException(e.message);

@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
+import { formatDate } from 'date-fns';
 import { AcceptCodeBoletoBancoBrasilEnum } from '../enums/accept-code-boleto.banco-brasil.enum';
 import { BoletoTypeCodeBancoBrasilEnum } from '../enums/boleto-type-code.banco-brasil.enum';
 import { ModalityCodeBoletoBancoBrasilEnum } from '../enums/modality-code-boleto.banco-brasil.enum';
@@ -24,10 +25,16 @@ export class CreateBoletoBancoBrasilDto {
   modalityCode?: ModalityCodeBoletoBancoBrasilEnum;
 
   @Expose({ name: 'dataEmissao' })
-  issueDate?: string;
+  @Transform(({ value }) => formatDate(new Date(value), 'dd.MM.yyyy'), {
+    toPlainOnly: true,
+  })
+  issueDate?: Date;
 
   @Expose({ name: 'dataVencimento' })
-  dueDate: string;
+  @Transform(({ value }) => formatDate(new Date(value), 'dd.MM.yyyy'), {
+    toPlainOnly: true,
+  })
+  dueDate: Date;
 
   @Expose({ name: 'valorOriginal' })
   amount: number;

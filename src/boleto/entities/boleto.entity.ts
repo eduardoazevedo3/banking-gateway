@@ -40,7 +40,7 @@ export class Boleto<T = object> {
     enumName: 'BoletoIssuingBankEnum',
   })
   @Column('enum', { name: 'issuing_bank', enum: BoletoIssuingBankEnum })
-  issuingBank: string;
+  issuingBank: BoletoIssuingBankEnum;
 
   @ApiProperty({ example: { key: 'value' } })
   @Column('json', { name: 'issue_data' })

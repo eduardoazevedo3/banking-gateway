@@ -1,4 +1,4 @@
 export enum DocumentTypeBoletoBancoBrasilEnum {
-  CNPJ = 'CNPJ',
-  CPF = 'CPF',
+  CPF = 1,
+  CNPJ = 2,
 }
