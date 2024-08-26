@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { Boleto } from '../../boleto/entities/boleto.entity';
-import { BoletoStatusEnum } from '../../boleto/enums/boleto.enum';
+import { BoletoStatusEnum } from '../../boleto/enums/boleto-status.enum';
 import { IBoletoBanking } from '../interfaces/boleto.banking.interface';
 import { BancoBrasilService } from './banco-brasil.service';
 import { CreateBoletoBancoBrasilTransform } from './transformers/create-boleto.banco-brasil.transform';

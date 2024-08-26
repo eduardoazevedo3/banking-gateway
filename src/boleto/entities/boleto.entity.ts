@@ -6,11 +6,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {
-  BoletoEntityTypeEnum,
-  BoletoIssuingBankEnum,
-  BoletoStatusEnum,
-} from '../enums/boleto.enum';
+import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
+import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
+import { BoletoStatusEnum } from '../enums/boleto-status.enum';
 
 @Entity('boletos')
 export class Boleto<T = object> {

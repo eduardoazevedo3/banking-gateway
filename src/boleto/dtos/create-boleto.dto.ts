@@ -12,11 +12,9 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import {
-  BoletoEntityTypeEnum,
-  BoletoIssuingBankEnum,
-  BoletoNegativationAgencyEnum,
-} from '../enums/boleto.enum';
+import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
+import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
+import { BoletoNegativationAgencyEnum } from '../enums/boleto-negativation-agency.enum copy';
 
 export class CreateBoletoDto {
   @ApiProperty({ example: '123456789' })
