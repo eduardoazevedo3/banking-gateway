@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { BoletoBankingService } from '../banking/boleto.banking.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
@@ -22,6 +22,17 @@ export class BoletoService {
   }
 
   async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
+    const existingBoleto = await this.connection.manager.findOneBy(Boleto, {
+      issuingBank: boletoDto.issuingBank,
+      ourNumber: boletoDto.ourNumber,
+    });
+
+    if (existingBoleto) {
+      throw new BadRequestException([
+        `ourNumber already exists for ${boletoDto.issuingBank}`,
+      ]);
+    }
+
     return await this.connection.manager.save(Boleto, {
       ...boletoDto,
     });
