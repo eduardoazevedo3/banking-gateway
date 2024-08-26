@@ -31,7 +31,7 @@ export class Boleto<T = object> {
     enum: BoletoStatusEnum,
     enumName: 'BoletoStatusEnum',
   })
-  @Column('enum', { enum: BoletoStatusEnum })
+  @Column('enum', { enum: BoletoStatusEnum, default: BoletoStatusEnum.PENDING })
   status: BoletoStatusEnum;
 
   @ApiProperty({

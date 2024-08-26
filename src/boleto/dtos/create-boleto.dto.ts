@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsDate,
+  IsDateString,
   IsDecimal,
   IsEnum,
   IsNumber,
@@ -16,7 +16,6 @@ import {
   BoletoEntityTypeEnum,
   BoletoIssuingBankEnum,
   BoletoNegativationAgencyEnum,
-  BoletoStatusEnum,
 } from '../enums/boleto.enum';
 
 export class CreateBoletoDto {
@@ -31,14 +30,6 @@ export class CreateBoletoDto {
   ourNumber: string;
 
   @ApiProperty({
-    example: BoletoStatusEnum.PENDING,
-    enum: BoletoStatusEnum,
-    enumName: 'BoletoStatusEnum',
-  })
-  @IsEnum(BoletoStatusEnum)
-  status: BoletoStatusEnum;
-
-  @ApiProperty({
     example: BoletoIssuingBankEnum.BANCO_BRASIL,
     enum: BoletoIssuingBankEnum,
     enumName: 'BoletoIssuingBankEnum',
@@ -51,11 +42,11 @@ export class CreateBoletoDto {
   issueData: object;
 
   @ApiProperty({ example: '2024-08-10' })
-  @IsDate()
+  @IsDateString()
   issueDate: Date;
 
   @ApiProperty({ example: '2024-08-10' })
-  @IsDate()
+  @IsDateString()
   dueDate: Date;
 
   @ApiProperty({ example: 100.0 })

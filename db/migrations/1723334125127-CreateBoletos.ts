@@ -7,7 +7,7 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
 				id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				reference_code VARCHAR(255) NOT NULL,
 				our_number VARCHAR(255) NOT NULL,
-				status VARCHAR(255) NOT NULL,
+				status VARCHAR(255) NOT NULL DEFAULT 'PENDING',
 				issuing_bank VARCHAR(255) NOT NULL,
 				issue_data JSON NOT NULL,
 				issue_date DATE NOT NULL,
