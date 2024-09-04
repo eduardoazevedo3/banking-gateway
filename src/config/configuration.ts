@@ -2,6 +2,10 @@ export default () => ({
   app: {
     env: process.env.NODE_ENV || 'development',
   },
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+  },
   database: {
     host: process.env.DB_HOST,
     username: process.env.DB_USERNAME,

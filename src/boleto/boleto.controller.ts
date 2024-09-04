@@ -22,7 +22,8 @@ export class BoletoController {
   async register(@Param('id') id: number): Promise<Boleto> {
     try {
       const boleto = await this.boletoService.findOne(id);
-      return await this.boletoService.register(boleto);
+      await this.boletoService.register(boleto);
+      return boleto;
     } catch (e) {
       if (e instanceof AuthBadRequestException) {
         throw new BadRequestException(e.message);

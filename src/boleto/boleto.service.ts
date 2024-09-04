@@ -1,6 +1,7 @@
+import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Job, Queue } from 'bullmq';
 import { DataSource } from 'typeorm';
-import { BoletoBankingService } from '../banking/boleto.banking.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
 
@@ -8,7 +9,10 @@ import { Boleto } from './entities/boleto.entity';
 export class BoletoService {
   constructor(
     private readonly connection: DataSource,
-    private readonly boletoBankingService: BoletoBankingService,
+    // private readonly boletoBankingService: BoletoBankingService,
+
+    @InjectQueue('boleto')
+    private boletoQueue: Queue,
   ) {}
 
   async findAll(): Promise<Boleto[]> {
@@ -38,7 +42,12 @@ export class BoletoService {
     });
   }
 
-  async register(boleto): Promise<Boleto> {
-    return await this.boletoBankingService.register(boleto);
+  async register(boleto): Promise<Job> {
+    // return await this.boletoBankingService.register(boleto);
+    return await this.boletoQueue.add(
+      'register',
+      { boletoId: boleto.id },
+      { removeOnComplete: true },
+    );
   }
 }

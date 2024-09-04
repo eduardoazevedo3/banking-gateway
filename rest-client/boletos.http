@@ -1,3 +1,5 @@
+### Create Boleto
+
 POST http://localhost:3000/v1/boletos HTTP/1.1
 content-type: application/json
 
@@ -28,3 +30,8 @@ content-type: application/json
   "payerState": "SP",
   "payerPhone": "(11) 91234-0192"
 }
+
+### Boleto Register
+
+GET http://localhost:3000/v1/boletos/1/register HTTP/1.1
+content-type: application/json

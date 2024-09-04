@@ -5,6 +5,11 @@ type TAppConfig = {
   env: string;
 };
 
+type TRedis = {
+  host: string;
+  port: number;
+};
+
 type TDatabaseConfig = {
   host: string;
   port: number;
@@ -29,6 +34,10 @@ export class AppConfigService {
 
   get app(): TAppConfig {
     return { ...this.configService.get('app') };
+  }
+
+  get redis(): TRedis {
+    return { ...this.configService.get('redis') };
   }
 
   get database(): TDatabaseConfig {
