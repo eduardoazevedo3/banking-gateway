@@ -15,7 +15,7 @@ export const databaseAsyncOptions: TypeOrmModuleAsyncOptions = {
       username,
       password,
       database: name,
-      logging: true,
+      logging: false,
       synchronize: false,
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     };

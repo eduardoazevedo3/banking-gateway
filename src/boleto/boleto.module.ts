@@ -11,6 +11,15 @@ import { BoletoProcessor } from './processors/boleto.processor';
   imports: [
     BullModule.registerQueue({
       name: 'boleto',
+      defaultJobOptions: {
+        removeOnComplete: true,
+        removeOnFail: true,
+        attempts: 6,
+        backoff: {
+          type: 'exponential',
+          delay: 3000,
+        },
+      },
     }),
     BullBoardModule.forFeature({
       name: 'boleto',

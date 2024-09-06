@@ -43,11 +43,6 @@ export class BoletoService {
   }
 
   async register(boleto): Promise<Job> {
-    // return await this.boletoBankingService.register(boleto);
-    return await this.boletoQueue.add(
-      'register',
-      { boletoId: boleto.id },
-      { removeOnComplete: true },
-    );
+    return await this.boletoQueue.add('register', { boletoId: boleto.id });
   }
 }

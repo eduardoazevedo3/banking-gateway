@@ -22,13 +22,13 @@ export class BoletoBancoBrasilService
       boleto as Boleto<TIssueDataBoleto>,
     );
     const payload = instanceToPlain(boletoDto);
-    // const responseData = await this.request(
-    //   'POST',
-    //   '/boleto/register',
-    //   payload,
-    // );
+    const responseData = await this.request(
+      'POST',
+      '/boleto/register',
+      payload,
+    );
 
-    console.log(payload);
+    Logger.log(responseData);
 
     boleto.status = BoletoStatusEnum.PENDING;
     return boleto;
