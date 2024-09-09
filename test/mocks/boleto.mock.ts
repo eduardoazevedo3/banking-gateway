@@ -1,18 +1,19 @@
+import { faker } from '@faker-js/faker';
 import { Boleto } from '../../src/boleto/entities/boleto.entity';
 import { BoletoIssuingBankEnum } from '../../src/boleto/enums/boleto-issuing-bank.enum';
 import { BoletoStatusEnum } from '../../src/boleto/enums/boleto-status.enum';
 
 export function boletoMock(boleto?: Partial<Boleto>): Boleto {
   return {
-    id: 123,
+    id: faker.number.int({ min: 1 }),
     status: BoletoStatusEnum.PENDING,
-    referenceCode: '1234',
-    ourNumber: '98765',
+    referenceCode: faker.string.numeric(15),
+    ourNumber: faker.string.numeric(15),
     issuingBank: BoletoIssuingBankEnum.BANCO_BRASIL,
     issueData: {},
-    issueDate: new Date('2024-08-25'),
-    dueDate: new Date('2024-09-10'),
-    amount: 100,
+    issueDate: faker.date.recent(),
+    dueDate: faker.date.soon({ days: 15 }),
+    amount: faker.number.float({ min: 15, max: 1000, fractionDigits: 2 }),
     discountAmount: 0,
     fineAmount: 0,
     interestAmount: 0,
@@ -20,7 +21,7 @@ export function boletoMock(boleto?: Partial<Boleto>): Boleto {
     boletoTypeDescription: 'Outros',
     beneficiaryType: 'CNPJ',
     beneficiaryDocument: '90.890.230/0001-66',
-    beneficiaryName: 'Sacador Cobrancas LTDA',
+    beneficiaryName: 'Banking Gateway LTDA',
     payerType: 'CPF',
     payerDocument: '863.829.147-70',
     payerName: 'Jose da Silva',

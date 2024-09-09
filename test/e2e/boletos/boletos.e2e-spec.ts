@@ -30,7 +30,7 @@ describe('Boletos', () => {
       .overrideProvider(BoletoService)
       .useValue(boletoService)
       .overrideProvider(BoletoBancoBrasilService)
-      .useValue({ register: () => null })
+      .useValue({ register: () => boleto })
       .compile();
 
     queue = module.get<Queue>(getQueueToken('boleto'));

@@ -15,8 +15,6 @@ export class BoletoProcessor extends WorkerHost {
       `Processing boleto job "${job.id}" of type "${job.name}" with data ${JSON.stringify(job.data)}`,
     );
 
-    console.log('Processing boleto job', job.data);
-
     const boleto = await this.connection.manager.findOneByOrFail(
       Boleto<object>,
       { id: job.data.boletoId },

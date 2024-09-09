@@ -23,11 +23,11 @@ export class CreateBoletoBancoBrasilTransform {
     boletoDto.issueDate = boleto.issueDate;
     boletoDto.dueDate = boleto.dueDate;
     boletoDto.amount = boleto.amount;
-    boletoDto.protestDays = boleto.protestDays;
+    boletoDto.protestDays = boleto.protestDays || undefined;
     boletoDto.acceptExpiredBoleto = boleto.receiptDaysLimit
       ? YesNoBoletoBancoBrasilEnum.YES
       : YesNoBoletoBancoBrasilEnum.NO;
-    boletoDto.receiptDaysLimit = boleto.receiptDaysLimit;
+    boletoDto.receiptDaysLimit = boleto.receiptDaysLimit || undefined;
     boletoDto.acceptCode = AcceptCodeBoletoBancoBrasilEnum.ACCEPTED;
     boletoDto.boletoTypeCode = boleto.boletoTypeCode;
     boletoDto.boletoTypeDescription = boleto.boletoTypeDescription;
@@ -47,7 +47,7 @@ export class CreateBoletoBancoBrasilTransform {
   private discountPayload(
     boleto: Boleto<TIssueDataBoleto>,
   ): DiscountBoletoBancoBrasilDto {
-    if (!boleto.issueData.discount) return null;
+    if (!boleto.issueData.discount) return;
 
     const boletoDiscountDto = new DiscountBoletoBancoBrasilDto();
     boletoDiscountDto.type = boleto.issueData.discount.type;
@@ -60,7 +60,7 @@ export class CreateBoletoBancoBrasilTransform {
   private interestPayload(
     boleto: Boleto<TIssueDataBoleto>,
   ): InterestBoletoBancoBrasilDto {
-    if (!boleto.issueData.interest) return null;
+    if (!boleto.issueData.interest) return;
 
     const boletoInterestDto = new InterestBoletoBancoBrasilDto();
     boletoInterestDto.type = boleto.issueData.interest.type;
@@ -72,7 +72,7 @@ export class CreateBoletoBancoBrasilTransform {
   private finePayload(
     boleto: Boleto<TIssueDataBoleto>,
   ): FineBoletoBancoBrasilDto {
-    if (!boleto.issueData.fine) return null;
+    if (!boleto.issueData.fine) return;
 
     const boletoFineDto = new FineBoletoBancoBrasilDto();
     boletoFineDto.type = boleto.issueData.fine.type;

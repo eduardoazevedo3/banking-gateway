@@ -3,6 +3,7 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject } from '@nestjs/common';
 import { Method } from 'axios';
 import { plainToClass } from 'class-transformer';
+import * as https from 'https';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AppConfigService } from '../../config/app-config.service';
 import { AuthBadRequestException } from '../exceptions/auth-bad-request.exception';
@@ -37,6 +38,7 @@ export abstract class BancoBrasilService {
         headers: {
           Authorization: `${credentials.tokenType} ${credentials.accessToken}`,
         },
+        httpsAgent: this.getHttpAgent(),
       }),
     );
 
@@ -51,6 +53,7 @@ export abstract class BancoBrasilService {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${this.encodedCredentials}`,
           },
+          httpsAgent: this.getHttpAgent(),
         })
         .pipe(
           catchError((e) => {
@@ -114,5 +117,14 @@ export abstract class BancoBrasilService {
 
   private get cacheKey(): string {
     return 'cache-key';
+  }
+
+  private getHttpAgent(): https.Agent {
+    return {
+      sandbox: new https.Agent({
+        rejectUnauthorized: false,
+      }),
+      production: undefined,
+    }[this.getCurrentEnv];
   }
 }
