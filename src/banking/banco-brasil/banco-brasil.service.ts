@@ -34,8 +34,9 @@ export abstract class BancoBrasilService {
       this.httpService.request<T>({
         method: method,
         url: `${this.apiUrl}${path}?${this.appKeyName}=${bancoBrasilConfig.appKey}`,
-        params: payload,
+        data: payload,
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `${credentials.tokenType} ${credentials.accessToken}`,
         },
         httpsAgent: this.getHttpAgent(),

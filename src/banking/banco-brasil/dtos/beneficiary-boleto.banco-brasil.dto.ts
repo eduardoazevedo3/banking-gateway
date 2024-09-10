@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { DocumentTypeBoletoBancoBrasilEnum } from '../enums/document-type-boleto.banco-brasil.enum';
 
 export class BeneficiaryBoletoBancoBrasilDto {
@@ -6,6 +6,9 @@ export class BeneficiaryBoletoBancoBrasilDto {
   documentType: DocumentTypeBoletoBancoBrasilEnum;
 
   @Expose({ name: 'numeroInscricao' })
+  @Transform(({ value }) => value.replace(/\D/g, ''), {
+    toPlainOnly: true,
+  })
   documentNumber: string;
 
   @Expose({ name: 'nome' })

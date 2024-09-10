@@ -9,7 +9,6 @@ import { Boleto } from './entities/boleto.entity';
 export class BoletoService {
   constructor(
     private readonly connection: DataSource,
-    // private readonly boletoBankingService: BoletoBankingService,
 
     @InjectQueue('boleto')
     private boletoQueue: Queue,
