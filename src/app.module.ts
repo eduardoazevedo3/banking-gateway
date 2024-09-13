@@ -6,8 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BoletoModule } from './boleto/boleto.module';
-import { AppConfigModule } from './config/app-config.module';
-import { AppConfigService } from './config/app-config.service';
+import { bullAsyncOptions } from './config/bull.config';
 import { databaseAsyncOptions } from './config/database.config';
 import { RequestLoggerMiddleware } from './core/middlewares/request-logger.middleware';
 import { CustomerModule } from './customer/customer.module';
@@ -15,16 +14,7 @@ import { CustomerModule } from './customer/customer.module';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync(databaseAsyncOptions),
-    BullModule.forRootAsync({
-      imports: [AppConfigModule],
-      useFactory: async (configService: AppConfigService) => ({
-        connection: {
-          host: configService.redis.host,
-          port: configService.redis.port,
-        },
-      }),
-      inject: [AppConfigService],
-    }),
+    BullModule.forRootAsync(bullAsyncOptions),
     BullBoardModule.forRoot({
       route: '/queues',
       adapter: ExpressAdapter,

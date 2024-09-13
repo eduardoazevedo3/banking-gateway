@@ -1,13 +1,5 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthBadRequestException } from '../banking/exceptions/auth-bad-request.exception';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
@@ -20,16 +12,9 @@ export class BoletoController {
   @Get(':id/register')
   @ApiResponse({ status: 200, type: Boleto })
   async register(@Param('id') id: number): Promise<Boleto> {
-    try {
-      const boleto = await this.boletoService.findOne(id);
-      await this.boletoService.register(boleto);
-      return boleto;
-    } catch (e) {
-      if (e instanceof AuthBadRequestException) {
-        throw new BadRequestException(e.message);
-      }
-      throw e;
-    }
+    const boleto = await this.boletoService.findOne(id);
+    await this.boletoService.register(boleto);
+    return boleto;
   }
 
   @Get()

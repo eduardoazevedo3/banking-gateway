@@ -2,22 +2,15 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
+import { bullQueueDefaultOptions } from '../config/bull.config';
 import { BoletoController } from './boleto.controller';
 import { BoletoService } from './boleto.service';
 
 @Module({
   imports: [
     BullModule.registerQueue({
+      ...bullQueueDefaultOptions,
       name: 'boleto',
-      defaultJobOptions: {
-        removeOnComplete: true,
-        removeOnFail: true,
-        attempts: 6,
-        backoff: {
-          type: 'exponential',
-          delay: 3000,
-        },
-      },
     }),
     BullBoardModule.forFeature({
       name: 'boleto',

@@ -1,9 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
 import { DataSource } from 'typeorm';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
+import { RecordValidationException } from './exceptions/record-validation.exception';
 
 @Injectable()
 export class BoletoService {
@@ -31,9 +32,9 @@ export class BoletoService {
     });
 
     if (existingBoleto) {
-      throw new BadRequestException([
-        `ourNumber already exists for ${boletoDto.issuingBank}`,
-      ]);
+      throw new RecordValidationException(
+        `ourNumber already exists for ${existingBoleto.issuingBank}`,
+      );
     }
 
     return await this.connection.manager.save(Boleto, {
