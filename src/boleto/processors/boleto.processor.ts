@@ -15,12 +15,15 @@ export class BoletoProcessor extends WorkerHost {
       `Processing boleto job "${job.id}" of type "${job.name}" with data ${JSON.stringify(job.data)}`,
     );
 
-    const boleto = await this.connection.manager.findOneByOrFail(
-      Boleto<object>,
-      { id: job.data.boletoId },
-    );
+    let boleto = await this.connection.manager.findOneByOrFail(Boleto<object>, {
+      id: job.data.boletoId,
+    });
 
-    await this.boletoBankingService.register(boleto);
+    boleto = await this.boletoBankingService.register(boleto);
+
+    await this.connection.manager.save(Boleto<object>, {
+      ...boleto,
+    });
   }
 
   @OnWorkerEvent('completed')
