@@ -1,7 +1,7 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
-import { DataSource } from 'typeorm';
+import { DataSource, Equal } from 'typeorm';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
 import { RecordValidationException } from './exceptions/record-validation.exception';
@@ -21,15 +21,15 @@ export class BoletoService {
 
   async findOne(id: number): Promise<Boleto> {
     return await this.connection.manager.findOneByOrFail(Boleto<object>, {
-      id,
+      id: Equal(id),
     });
   }
 
   async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
     const existingBoleto = await this.connection.manager.findOneBy(Boleto, {
-      accountId: boletoDto.accountId,
-      issuingBank: boletoDto.issuingBank,
-      ourNumber: boletoDto.ourNumber,
+      accountId: Equal(boletoDto.accountId),
+      issuingBank: Equal(boletoDto.issuingBank),
+      ourNumber: Equal(boletoDto.ourNumber),
     });
 
     if (existingBoleto) {
