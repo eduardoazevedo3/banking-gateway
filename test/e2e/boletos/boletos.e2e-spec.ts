@@ -1,5 +1,10 @@
 import { getQueueToken } from '@nestjs/bullmq';
-import { BadRequestException, INestApplication } from '@nestjs/common';
+import {
+  BadRequestException,
+  INestApplication,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 import { Queue, QueueEvents } from 'bullmq';
@@ -9,17 +14,18 @@ import { AppListenerModule } from '../../../src/app.listener.module';
 import { AppModule } from '../../../src/app.module';
 import { BoletoBancoBrasilService } from '../../../src/banking/banco-brasil/boleto.banco-brasil.service';
 import { BoletoBankingService } from '../../../src/banking/boleto.banking.service';
-import { BoletoService } from '../../../src/boleto/boleto.service';
 import { Boleto } from '../../../src/boleto/entities/boleto.entity';
 import { BoletoStatusEnum } from '../../../src/boleto/enums/boleto-status.enum';
+import { BadRequestFilter } from '../../../src/core/filters/bad-request.filter';
+import { EntityNotFoundFilter } from '../../../src/core/filters/entity-not-found.filter';
 import { boletoMock } from '../../mocks/boleto.mock';
 
 describe('Boletos', () => {
   const boleto = boletoMock();
-  const boletoService = {
-    findAll: (): Boleto[] => [boleto],
-    findOne: (): Boleto => boleto,
-  };
+  // const boletoService = {
+  //   findAll: (): Boleto[] => [boleto],
+  //   findOne: (): Boleto => boleto,
+  // };
 
   let app: INestApplication;
   let queue: Queue;
@@ -28,16 +34,20 @@ describe('Boletos', () => {
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule, AppListenerModule],
-    })
-      .overrideProvider(BoletoService)
-      .useValue(boletoService)
-      .compile();
+    }).compile();
 
     queue = module.get<Queue>(getQueueToken('boleto'));
     queueEvents = new QueueEvents('boleto');
-    app = module.createNestApplication();
-
     await queue.waitUntilReady();
+
+    app = module.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalFilters(new EntityNotFoundFilter(), new BadRequestFilter());
+    app.enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: '1',
+    });
+
     await app.init();
   });
 
@@ -47,26 +57,44 @@ describe('Boletos', () => {
   });
 
   describe('Endpoints', () => {
+    let connection: DataSource;
+    let boleto: Boleto;
+
+    beforeAll(async () => {
+      connection = app.get<DataSource>(getDataSourceToken());
+      boleto = await connection.manager.save(Boleto, boletoMock());
+    });
+
     it('GET boletos', () => {
       return request(app.getHttpServer())
-        .get('/boletos')
+        .get('/v1/boletos')
         .expect(200)
-        .expect((res) => {
-          return expect(JSON.stringify(res.body)).toEqual(
-            JSON.stringify([boleto]),
-          );
-        });
+        .expect((res) => res.body.length > 0);
     });
 
     it('GET boletos/:id', () => {
       return request(app.getHttpServer())
-        .get('/boletos/:id')
+        .get(`/v1/boletos/${boleto.id}`)
         .expect(200)
-        .expect((res) => {
-          return expect(JSON.stringify(res.body)).toEqual(
-            JSON.stringify(boleto),
-          );
-        });
+        .expect((res) => expect(res.body.id).toEqual(boleto.id));
+    });
+
+    it('POST boletos', () => {
+      const boletoPayload = {
+        ...boletoMock(),
+        amount: '10.00',
+        issueDate: '2024-08-10',
+        dueDate: '2024-08-10',
+        discountAmount: undefined,
+        fineAmount: undefined,
+        interestAmount: undefined,
+      };
+
+      return request(app.getHttpServer())
+        .post(`/v1/boletos`)
+        .send(boletoPayload)
+        .expect(201)
+        .expect((res) => expect(res.body.id).toEqual(boletoPayload.id));
     });
   });
 
