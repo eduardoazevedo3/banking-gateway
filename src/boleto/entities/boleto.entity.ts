@@ -16,7 +16,11 @@ export class Boleto<T = object> {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ example: '123456789' })
+  @ApiProperty({ example: 'Ab.12345-6789' })
+  @Column('varchar', { name: 'account_id' })
+  accountId: string;
+
+  @ApiProperty({ example: 'Ab.12345-6789' })
   @Column('varchar', { name: 'reference_code' })
   referenceCode: string;
 

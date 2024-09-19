@@ -5,7 +5,8 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
     await queryRunner.query(`
 			CREATE TABLE boletos (
 				id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				reference_code VARCHAR(255) NOT NULL,
+				account_id VARCHAR(64) NOT NULL,
+				reference_code VARCHAR(64) NOT NULL,
 				our_number VARCHAR(255) NOT NULL,
 				status VARCHAR(255) NOT NULL DEFAULT 'PENDING',
 				issuing_bank VARCHAR(255) NOT NULL,

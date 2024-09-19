@@ -27,13 +27,14 @@ export class BoletoService {
 
   async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
     const existingBoleto = await this.connection.manager.findOneBy(Boleto, {
+      accountId: boletoDto.accountId,
       issuingBank: boletoDto.issuingBank,
       ourNumber: boletoDto.ourNumber,
     });
 
     if (existingBoleto) {
       throw new RecordValidationException(
-        `ourNumber already exists for ${existingBoleto.issuingBank}`,
+        `ourNumber already exists for this accountId and ${existingBoleto.issuingBank}`,
       );
     }
 
