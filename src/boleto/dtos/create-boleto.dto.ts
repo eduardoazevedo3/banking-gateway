@@ -18,7 +18,11 @@ import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
 import { BoletoNegativationAgencyEnum } from '../enums/boleto-negativation-agency.enum copy';
 
 export class CreateBoletoDto {
-  @ApiProperty({ example: 'Ab.12345-6789' })
+  @ApiProperty({
+    example: 'Ab.12345-6789',
+    description:
+      'Unique identifier of the account. Valid characters: a-z, A-Z, 0-9, dot and hyphen',
+  })
   @IsString()
   @MaxLength(64)
   @Matches(/^[a-zA-Z0-9.-]+$/, {
@@ -26,18 +30,40 @@ export class CreateBoletoDto {
   })
   accountId: string;
 
-  @ApiProperty({ example: 'Ab.12345-6789' })
+  @ApiProperty({
+    example: 'Ab.12345-6789',
+    description:
+      'Unique identifier of the account. Valid characters: a-z, A-Z, 0-9, dot and hyphen',
+  })
+  @IsString()
+  @MaxLength(64)
+  @Matches(/^[a-zA-Z0-9.-]+$/, {
+    message: 'covenantId can only contain letters, numbers, dots and hyphens',
+  })
+  covenantId: string;
+
+  @ApiPropertyOptional({
+    example: 'Ab.12345-6789',
+    description:
+      'Your unique reference code identifier of the boleto by account.' +
+      'Valid characters: a-z, A-Z, 0-9, dot and hyphen',
+  })
   @IsString()
   @MaxLength(64)
   @Matches(/^[a-zA-Z0-9.-]+$/, {
     message:
       'referenceCode can only contain letters, numbers, dots and hyphens',
   })
-  referenceCode: string;
+  @IsOptional()
+  referenceCode?: string;
 
-  @ApiProperty({ example: '123456789' })
+  @ApiProperty({
+    example: '123456789',
+    description: 'Unique identifier of the boleto. Valid characters: 0-9',
+  })
   @IsString()
   @MaxLength(20)
+  @Matches(/^[0-9]+$/, { message: 'ourNumber can only contain numbers' })
   ourNumber: string;
 
   @ApiProperty({
@@ -141,11 +167,15 @@ export class CreateBoletoDto {
   })
   beneficiaryDocument: string;
 
-  @ApiProperty({ example: 'Alberto Santos' })
+  @ApiProperty({
+    example: 'Alberto Santos',
+    description:
+      'beneficiaryName can only contain letters and spaces. Max length: 255',
+  })
   @IsString()
   @Length(3, 255)
-  @Matches(/^[a-zA-Z\s]+$/, {
-    message: 'beneficiaryName can only contain letters and spaces',
+  @Matches(/^[a-zA-Z\-\s]+$/, {
+    message: 'beneficiaryName can only contain letters, hyphens and spaces',
   })
   beneficiaryName: string;
 
@@ -168,8 +198,8 @@ export class CreateBoletoDto {
   @ApiProperty({ example: 'Alberto Santos' })
   @IsString()
   @Length(3, 255)
-  @Matches(/^[a-zA-Z\s]+$/, {
-    message: 'payerName can only contain letters and spaces',
+  @Matches(/^[a-zA-Z\-\s]+$/, {
+    message: 'payerName can only contain letters, hyphens and spaces',
   })
   payerName: string;
 
@@ -198,13 +228,22 @@ export class CreateBoletoDto {
   @Length(3, 255)
   payerNeighborhood: string;
 
-  @ApiProperty({ example: 'SP' })
+  @ApiProperty({
+    example: 'SP',
+    description: 'Valid characters: A-Z. Max length: 2',
+  })
   @IsString()
   @Length(2, 2)
+  @Matches(/^[A-Z]+$/, {
+    message: 'payerState can only contain regex: A-Z',
+  })
   payerState: string;
 
   @ApiProperty({ example: '(11) 99999-9999' })
   @IsString()
   @Length(14, 15)
+  @Matches(/^[0-9()-\s]+$/, {
+    message: 'payerPhone can only contain regex: 0-9()-/s',
+  })
   payerPhone: string;
 }

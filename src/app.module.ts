@@ -9,7 +9,6 @@ import { BoletoModule } from './boleto/boleto.module';
 import { bullAsyncOptions } from './config/bull.config';
 import { databaseAsyncOptions } from './config/database.config';
 import { RequestLoggerMiddleware } from './core/middlewares/request-logger.middleware';
-import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { CustomerModule } from './customer/customer.module';
       route: '/queues',
       adapter: ExpressAdapter,
     }),
-    CustomerModule,
     BoletoModule,
   ],
   controllers: [AppController],

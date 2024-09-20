@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -19,6 +19,10 @@ export class Boleto<T = object> {
   @ApiProperty({ example: 'Ab.12345-6789' })
   @Column('varchar', { name: 'account_id' })
   accountId: string;
+
+  @ApiProperty({ example: 'Ab.12345-6789' })
+  @Column('varchar', { name: 'covenant_id' })
+  covenantId: string;
 
   @ApiProperty({ example: 'Ab.12345-6789' })
   @Column('varchar', { name: 'reference_code' })
@@ -60,43 +64,43 @@ export class Boleto<T = object> {
   @Column('decimal')
   amount: number;
 
-  @ApiProperty({ example: 10.0 })
+  @ApiPropertyOptional({ example: 10.0 })
   @Column('decimal', { name: 'discount_amount', nullable: false })
   discountAmount?: number;
 
-  @ApiProperty({ example: 10.0 })
+  @ApiPropertyOptional({ example: 10.0 })
   @Column('decimal', { name: 'fine_amount', nullable: false })
   fineAmount?: number;
 
-  @ApiProperty({ example: 10.0 })
+  @ApiPropertyOptional({ example: 10.0 })
   @Column('decimal', { name: 'interest_amount', nullable: false })
   interestAmount?: number;
 
-  @ApiProperty({ example: 10.0 })
+  @ApiPropertyOptional({ example: 10.0 })
   @Column('decimal', { name: 'fee_amount', nullable: false })
   feeAmount?: number;
 
-  @ApiProperty({ example: 30 })
+  @ApiPropertyOptional({ example: 30 })
   @Column('integer', { name: 'protest_days', nullable: false })
   protestDays?: number;
 
-  @ApiProperty({ example: 30 })
+  @ApiPropertyOptional({ example: 30 })
   @Column('integer', { name: 'negativation_days', nullable: false })
   negativationDays?: number;
 
-  @ApiProperty({ example: 'SERASA' })
+  @ApiPropertyOptional({ example: 'SERASA' })
   @Column('varchar', { name: 'negativation_agency', nullable: false })
   negativationAgency?: string;
 
-  @ApiProperty({ example: 30 })
+  @ApiPropertyOptional({ example: 30 })
   @Column('integer', { name: 'receipt_days_limit', nullable: false })
   receiptDaysLimit?: number;
 
-  @ApiProperty({ example: '123' })
+  @ApiPropertyOptional({ example: '123' })
   @Column('varchar', { name: 'boleto_type_code', nullable: false })
   boletoTypeCode?: number;
 
-  @ApiProperty({ example: 'Duplicata Mercantil' })
+  @ApiPropertyOptional({ example: 'Duplicata Mercantil' })
   @Column('varchar', { name: 'boleto_type_description', nullable: false })
   boletoTypeDescription?: string;
 
@@ -160,13 +164,33 @@ export class Boleto<T = object> {
   @Column('varchar', { name: 'payer_phone' })
   payerPhone: string;
 
-  @ApiProperty({ example: 'Rejection boleto reason' })
+  @ApiPropertyOptional({ example: 'Rejection boleto reason' })
   @Column('text', { name: 'rejection_reason' })
   rejectionReason?: string;
+
+  @ApiPropertyOptional({
+    example: '00190000090312855707500003001784984000001000',
+  })
+  @Column('varchar', { name: 'barcode' })
+  barcode?: string;
+
+  @ApiPropertyOptional({
+    example: '00194984000000100000000003128557070000030017',
+  })
+  @Column('varchar', { name: 'digitable_line' })
+  digitableLine?: string;
+
+  @ApiPropertyOptional({ example: '8923994' })
+  @Column('varchar', { name: 'billing_contract_number' })
+  billingContractNumber?: string;
 
   @CreateDateColumn({ type: 'datetime', name: 'created_at', precision: 3 })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime', name: 'updated_at', precision: 3 })
   updatedAt: Date;
+
+  @ApiPropertyOptional({ example: '2024-08-10T00:00:00.000Z' })
+  @Column('datetime', { name: 'registered_at', precision: 3 })
+  registeredAt?: Date;
 }

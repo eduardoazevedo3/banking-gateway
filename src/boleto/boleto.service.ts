@@ -26,17 +26,8 @@ export class BoletoService {
   }
 
   async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
-    const existingBoleto = await this.connection.manager.findOneBy(Boleto, {
-      accountId: Equal(boletoDto.accountId),
-      issuingBank: Equal(boletoDto.issuingBank),
-      ourNumber: Equal(boletoDto.ourNumber),
-    });
-
-    if (existingBoleto) {
-      throw new RecordValidationException(
-        `ourNumber already exists for this accountId and ${existingBoleto.issuingBank}`,
-      );
-    }
+    await this.validateOurNumberExists(boletoDto);
+    await this.validateReferenceCodeExists(boletoDto);
 
     return await this.connection.manager.save(Boleto, {
       ...boletoDto,
@@ -45,5 +36,38 @@ export class BoletoService {
 
   async register(boleto): Promise<Job> {
     return await this.boletoQueue.add('register', { boletoId: boleto.id });
+  }
+
+  private async validateOurNumberExists(
+    boletoDto: CreateBoletoDto,
+  ): Promise<void> {
+    const existingBoleto = await this.connection.manager.findOneBy(Boleto, {
+      accountId: Equal(boletoDto.accountId),
+      covenantId: Equal(boletoDto.covenantId),
+      ourNumber: Equal(boletoDto.ourNumber),
+    });
+
+    if (existingBoleto) {
+      throw new RecordValidationException(
+        `ourNumber already exists for this accountId and covenantId`,
+      );
+    }
+  }
+
+  private async validateReferenceCodeExists(
+    boletoDto: CreateBoletoDto,
+  ): Promise<void> {
+    if (!boletoDto.referenceCode) return;
+
+    const existingBoleto = await this.connection.manager.findOneBy(Boleto, {
+      accountId: Equal(boletoDto.accountId),
+      referenceCode: Equal(boletoDto.referenceCode),
+    });
+
+    if (existingBoleto) {
+      throw new RecordValidationException(
+        `referenceCode already exists for this accountId`,
+      );
+    }
   }
 }

@@ -5,8 +5,9 @@ content-type: application/json
 
 {
   "accountId": "1234",
-  "referenceCode": "1234",
-  "ourNumber": "00031285570000098765",
+  "covenantId": "001-123456-10",
+  "ourNumber": "123459",
+  "referenceCode": "1235",
   "issuingBank": "BANCO_BRASIL",
   "issueData": {
     "modalityCode": "1",

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RecordValidationErrorDto } from '../core/dtos/record-validation-error.dto';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
@@ -31,6 +32,7 @@ export class BoletoController {
 
   @Post()
   @ApiResponse({ status: 201, type: Boleto })
+  @ApiResponse({ status: 400, type: RecordValidationErrorDto })
   async create(@Body() boleto: CreateBoletoDto): Promise<Boleto> {
     return await this.boletoService.create(boleto);
   }

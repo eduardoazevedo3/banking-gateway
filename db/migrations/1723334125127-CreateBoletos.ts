@@ -6,10 +6,11 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
 			CREATE TABLE boletos (
 				id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				account_id VARCHAR(64) NOT NULL,
-				reference_code VARCHAR(64) NOT NULL,
-				our_number VARCHAR(255) NOT NULL,
-				status VARCHAR(255) NOT NULL DEFAULT 'PENDING',
-				issuing_bank VARCHAR(255) NOT NULL,
+				covenant_id VARCHAR(64) NOT NULL,
+				reference_code VARCHAR(64),
+				our_number VARCHAR(64) NOT NULL,
+				status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
+				issuing_bank VARCHAR(50) NOT NULL,
 				issue_data JSON NOT NULL,
 				issue_date DATE NOT NULL,
 				due_date DATE NOT NULL,
@@ -38,8 +39,15 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
 				payer_state VARCHAR(255) NOT NULL,
 				payer_phone VARCHAR(255) NOT NULL,
 				rejection_reason TEXT,
+				barcode VARCHAR(64),
+				digitable_line VARCHAR(64),
+				billing_contract_number VARCHAR(64),
 				created_at DATETIME(3) NOT NULL DEFAULT now(3),
-				updated_at DATETIME(3) NOT NULL DEFAULT now(3)
+				updated_at DATETIME(3) NOT NULL DEFAULT now(3),
+				registered_at DATETIME(3),
+				INDEX idx_boletos_account_id (account_id),
+				UNIQUE INDEX idx_boletos_account_id_covenant_id_our_number (account_id, covenant_id, our_number),
+				UNIQUE INDEX idx_boletos_account_id_reference_code (account_id, reference_code)
 			)
 		`);
   }

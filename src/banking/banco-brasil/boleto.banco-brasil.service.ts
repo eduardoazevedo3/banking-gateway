@@ -28,7 +28,7 @@ export class BoletoBancoBrasilService
     );
 
     try {
-      const responseData = await this.request(
+      const responseData = await this.request<any>(
         'POST',
         '/cobrancas/v2/boletos',
         payload,
@@ -64,9 +64,10 @@ export class BoletoBancoBrasilService
       Logger.log(responseData);
 
       boleto.status = BoletoStatusEnum.OPENED;
-      // boleto.barcode = responseData.codigoBarraNumerico;
-      // boleto.digitableLine = responseData.linhaDigitavel;
-      // boleto.billingContractNumber = responseData.numeroContratoCobranca;
+      boleto.registeredAt = new Date();
+      boleto.barcode = responseData.codigoBarraNumerico;
+      boleto.digitableLine = responseData.linhaDigitavel;
+      boleto.billingContractNumber = responseData.numeroContratoCobranca;
       return boleto;
     } catch (error) {
       throw new Error(JSON.stringify(error.response?.data || error.message));

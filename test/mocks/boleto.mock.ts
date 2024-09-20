@@ -7,6 +7,7 @@ export function boletoMock(boleto?: Partial<Boleto>): Boleto {
   return {
     id: faker.number.int({ min: 1 }),
     accountId: faker.string.numeric(15),
+    covenantId: faker.string.numeric(15),
     status: BoletoStatusEnum.PENDING,
     referenceCode: faker.string.numeric(15),
     ourNumber: faker.string.numeric(15),
