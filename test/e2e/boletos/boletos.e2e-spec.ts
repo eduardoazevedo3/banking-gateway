@@ -12,21 +12,17 @@ import * as request from 'supertest';
 import { DataSource } from 'typeorm';
 import { AppListenerModule } from '../../../src/app.listener.module';
 import { AppModule } from '../../../src/app.module';
+import { BancoBrasilService } from '../../../src/banking/banco-brasil/banco-brasil.service';
 import { BoletoBancoBrasilService } from '../../../src/banking/banco-brasil/boleto.banco-brasil.service';
 import { BoletoBankingService } from '../../../src/banking/boleto.banking.service';
 import { Boleto } from '../../../src/boleto/entities/boleto.entity';
+import { BoletoIssuingBankEnum } from '../../../src/boleto/enums/boleto-issuing-bank.enum';
 import { BoletoStatusEnum } from '../../../src/boleto/enums/boleto-status.enum';
 import { BadRequestFilter } from '../../../src/core/filters/bad-request.filter';
 import { EntityNotFoundFilter } from '../../../src/core/filters/entity-not-found.filter';
 import { boletoMock } from '../../mocks/boleto.mock';
 
 describe('Boletos', () => {
-  const boleto = boletoMock();
-  // const boletoService = {
-  //   findAll: (): Boleto[] => [boleto],
-  //   findOne: (): Boleto => boleto,
-  // };
-
   let app: INestApplication;
   let queue: Queue;
   let queueEvents: QueueEvents;
@@ -65,21 +61,21 @@ describe('Boletos', () => {
       boleto = await connection.manager.save(Boleto, boletoMock());
     });
 
-    it('GET boletos', () => {
+    it('GET v1/:issuingBank/boletos', () => {
       return request(app.getHttpServer())
-        .get('/v1/boletos')
+        .get(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`)
         .expect(200)
         .expect((res) => res.body.length > 0);
     });
 
-    it('GET boletos/:id', () => {
+    it('GET v1/:issuingBank/boletos/:id', () => {
       return request(app.getHttpServer())
-        .get(`/v1/boletos/${boleto.id}`)
+        .get(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos/${boleto.id}`)
         .expect(200)
         .expect((res) => expect(res.body.id).toEqual(boleto.id));
     });
 
-    it('POST boletos', () => {
+    it('POST v1/:issuingBank/boletos', () => {
       const boletoPayload = {
         ...boletoMock(),
         amount: '10.00',
@@ -91,7 +87,7 @@ describe('Boletos', () => {
       };
 
       return request(app.getHttpServer())
-        .post(`/v1/boletos`)
+        .post(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`)
         .send(boletoPayload)
         .expect(201)
         .expect((res) => expect(res.body.id).toEqual(boletoPayload.id));
@@ -137,7 +133,7 @@ describe('Boletos', () => {
 
     it('should not register the boleto with error', async () => {
       const boletoBancoBrasilSpy = jest.spyOn(
-        BoletoBancoBrasilService.prototype as any,
+        BancoBrasilService.prototype as any,
         'request',
       );
 
