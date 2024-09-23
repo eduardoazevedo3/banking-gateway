@@ -1,6 +1,6 @@
 ### Create Boleto
 
-POST http://localhost:3000/v1/boletos HTTP/1.1
+POST http://localhost:3000/v1/BANCO_BRASIL/boletos HTTP/1.1
 content-type: application/json
 
 {
@@ -8,7 +8,6 @@ content-type: application/json
   "covenantId": "001-123456-10",
   "ourNumber": "123459",
   "referenceCode": "1235",
-  "issuingBank": "BANCO_BRASIL",
   "issueData": {
     "modalityCode": "1",
     "walletNumber": "17",

@@ -4,6 +4,7 @@ import { Job, Queue } from 'bullmq';
 import { DataSource, Equal } from 'typeorm';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
+import { BoletoIssuingBankEnum } from './enums/boleto-issuing-bank.enum';
 import { RecordValidationException } from './exceptions/record-validation.exception';
 
 @Injectable()
@@ -15,22 +16,27 @@ export class BoletoService {
     private boletoQueue: Queue,
   ) {}
 
-  async findAll(): Promise<Boleto[]> {
-    return await this.connection.manager.find(Boleto<object>);
+  async findAll(boleto: Partial<Boleto>): Promise<Boleto[]> {
+    return await this.connection.manager.findBy(Boleto<object>, boleto);
   }
 
-  async findOne(id: number): Promise<Boleto> {
+  async findOne(boleto: Partial<Boleto>): Promise<Boleto> {
     return await this.connection.manager.findOneByOrFail(Boleto<object>, {
-      id: Equal(id),
+      issuingBank: Equal(boleto.issuingBank),
+      id: Equal(boleto.id),
     });
   }
 
-  async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
+  async create(
+    issuingBank: BoletoIssuingBankEnum,
+    boletoDto: CreateBoletoDto,
+  ): Promise<Boleto> {
     await this.validateOurNumberExists(boletoDto);
     await this.validateReferenceCodeExists(boletoDto);
 
     return await this.connection.manager.save(Boleto, {
       ...boletoDto,
+      issuingBank,
     });
   }
 

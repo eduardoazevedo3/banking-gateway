@@ -4,36 +4,48 @@ import { RecordValidationErrorDto } from '../core/dtos/record-validation-error.d
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
+import { BoletoIssuingBankEnum } from './enums/boleto-issuing-bank.enum';
 
 @ApiTags('Boletos')
-@Controller('boletos')
+@Controller(':issuingBank/boletos')
 export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
   @Get(':id/register')
   @ApiResponse({ status: 200, type: Boleto })
-  async register(@Param('id') id: number): Promise<Boleto> {
-    const boleto = await this.boletoService.findOne(id);
+  async register(
+    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
+    @Param('id') id: number,
+  ): Promise<Boleto> {
+    const boleto = await this.boletoService.findOne({ issuingBank, id });
     await this.boletoService.register(boleto);
     return boleto;
   }
 
   @Get()
-  @ApiResponse({ status: 200, type: Array<Boleto> })
-  async findAll(): Promise<Boleto[]> {
-    return await this.boletoService.findAll();
+  @ApiResponse({ status: 200, type: [Boleto] })
+  async findAll(
+    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
+  ): Promise<Boleto[]> {
+    return await this.boletoService.findAll({ issuingBank });
   }
 
   @Get(':id')
   @ApiResponse({ status: 200, type: Boleto })
-  async findOne(@Param('id') id: number): Promise<Boleto> {
-    return await this.boletoService.findOne(id);
+  async findOne(
+    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
+    @Param('id') id: number,
+  ): Promise<Boleto> {
+    return await this.boletoService.findOne({ issuingBank, id });
   }
 
   @Post()
   @ApiResponse({ status: 201, type: Boleto })
   @ApiResponse({ status: 400, type: RecordValidationErrorDto })
-  async create(@Body() boleto: CreateBoletoDto): Promise<Boleto> {
-    return await this.boletoService.create(boleto);
+  async create(
+    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
+    @Body() boleto: CreateBoletoDto,
+  ): Promise<Boleto> {
+    return await this.boletoService.create(issuingBank, boleto);
   }
 }
