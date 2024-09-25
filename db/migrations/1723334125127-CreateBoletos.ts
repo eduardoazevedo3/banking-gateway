@@ -5,6 +5,7 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
     await queryRunner.query(`
 			CREATE TABLE boletos (
 				id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+				banking_credential_id BIGINT NOT NULL,
 				account_id VARCHAR(64) NOT NULL,
 				covenant_id VARCHAR(64) NOT NULL,
 				reference_code VARCHAR(64),
@@ -47,7 +48,8 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
 				registered_at DATETIME(3),
 				INDEX idx_boletos_account_id (account_id),
 				UNIQUE INDEX idx_boletos_account_id_covenant_id_our_number (account_id, covenant_id, our_number),
-				UNIQUE INDEX idx_boletos_account_id_reference_code (account_id, reference_code)
+				UNIQUE INDEX idx_boletos_account_id_reference_code (account_id, reference_code),
+				CONSTRAINT fk_boletos_banking_credential_id FOREIGN KEY (banking_credential_id) REFERENCES banking_credentials (id)
 			)
 		`);
   }
