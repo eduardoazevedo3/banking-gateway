@@ -19,16 +19,19 @@ import { BoletoNegativationAgencyEnum } from '../enums/boleto-negativation-agenc
 
 export class CreateBoletoDto {
   @ApiProperty({
-    example: 'Ab.12345-6789',
-    description:
-      'Unique identifier of the account. Valid characters: a-z, A-Z, 0-9, dot and hyphen',
+    example: '123',
+    description: 'Unique identifier of the account.',
   })
-  @IsString()
-  @MaxLength(64)
-  @Matches(/^[a-zA-Z0-9.-]+$/, {
-    message: 'accountId can only contain letters, numbers, dots and hyphens',
+  @IsNumber()
+  accountId: number;
+
+  @ApiPropertyOptional({
+    example: '123',
+    description: 'Unique identifier of the account.',
   })
-  accountId: string;
+  @IsOptional()
+  @IsNumber()
+  bankingCredentials?: number;
 
   @ApiProperty({
     example: 'Ab.12345-6789',
@@ -174,8 +177,9 @@ export class CreateBoletoDto {
   })
   @IsString()
   @Length(3, 255)
-  @Matches(/^[a-zA-Z\-\s]+$/, {
-    message: 'beneficiaryName can only contain letters, hyphens and spaces',
+  @Matches(/^[a-zA-Z.\-\s]+$/, {
+    message:
+      'beneficiaryName can only contain letters, dots, hyphens and spaces',
   })
   beneficiaryName: string;
 
@@ -198,8 +202,8 @@ export class CreateBoletoDto {
   @ApiProperty({ example: 'Alberto Santos' })
   @IsString()
   @Length(3, 255)
-  @Matches(/^[a-zA-Z\-\s]+$/, {
-    message: 'payerName can only contain letters, hyphens and spaces',
+  @Matches(/^[a-zA-Z.\-\s]+$/, {
+    message: 'payerName can only contain letters, dots, hyphens and spaces',
   })
   payerName: string;
 

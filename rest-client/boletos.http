@@ -4,10 +4,11 @@ POST http://localhost:3000/v1/BANCO_BRASIL/boletos HTTP/1.1
 content-type: application/json
 
 {
-  "accountId": "1234",
+  "accountId": 1234,
   "covenantId": "001-123456-10",
   "ourNumber": "123459",
   "referenceCode": "1235",
+  "issuingBank": "BANCO_BRASIL",
   "issueData": {
     "modalityCode": "1",
     "walletNumber": "17",
@@ -24,7 +25,7 @@ content-type: application/json
   "boletoTypeDescription": "Outros",
   "beneficiaryType": "CNPJ",
   "beneficiaryDocument": "90.890.230/0001-66",
-  "beneficiaryName": "Sacador Cobrancas LTDA",
+  "beneficiaryName": "Sacador Cobrancas S.A",
   "payerType": "CPF",
   "payerDocument": "863.829.147-70",
   "payerName": "Jose da Silva",
