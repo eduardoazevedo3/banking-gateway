@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { BoletoModule } from './boleto/boleto.module';
 import { bullAsyncOptions } from './config/bull.config';
 import { databaseAsyncOptions } from './config/database.config';
+import { CoreModule } from './core/core.module';
 import { RequestLoggerMiddleware } from './core/middlewares/request-logger.middleware';
 
 @Module({
@@ -18,6 +19,7 @@ import { RequestLoggerMiddleware } from './core/middlewares/request-logger.middl
       route: '/queues',
       adapter: ExpressAdapter,
     }),
+    CoreModule,
     BoletoModule,
   ],
   controllers: [AppController],

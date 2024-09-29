@@ -16,9 +16,9 @@ export class Boleto<T = object> {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ example: 'Ab.12345-6789' })
-  @Column('varchar', { name: 'account_id' })
-  accountId: string;
+  @ApiProperty({ example: 123 })
+  @Column('bigint', { name: 'account_id' })
+  accountId: number;
 
   @ApiProperty({ example: 'Ab.12345-6789' })
   @Column('varchar', { name: 'covenant_id' })

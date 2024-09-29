@@ -1,7 +1,7 @@
-export class RecordValidationException extends Error {
-  constructor(message: string) {
-    super(message);
+export class RecordValidationException {
+  message: string | string[];
+
+  constructor(message: string | string[]) {
     this.message = message;
-    this.name = RecordValidationException.name;
   }
 }

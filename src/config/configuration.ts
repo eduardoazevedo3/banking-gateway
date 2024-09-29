@@ -1,6 +1,7 @@
 export default () => ({
   app: {
     env: process.env.NODE_ENV || 'development',
+    debug: process.env.APP_DEBUG === 'true',
   },
   redis: {
     host: process.env.REDIS_HOST,

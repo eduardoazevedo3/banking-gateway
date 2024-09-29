@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 type TAppConfig = {
   env: string;
+  debug: boolean;
 };
 
 type TRedis = {

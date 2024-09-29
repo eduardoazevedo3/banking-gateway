@@ -11,7 +11,7 @@ export class BadRequestFilter implements ExceptionFilter {
     response.status(400).json({
       statusCode: 400,
       error: 'Bad Request',
-      message: [e.message],
+      message: Array.isArray(e.message) ? e.message : [e.message],
     });
   }
 }

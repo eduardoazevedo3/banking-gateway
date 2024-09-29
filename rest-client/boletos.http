@@ -4,10 +4,10 @@ POST http://localhost:3000/v1/BANCO_BRASIL/boletos HTTP/1.1
 content-type: application/json
 
 {
-  "accountId": 1234,
+  "accountId": 1,
   "covenantId": "001-123456-10",
-  "ourNumber": "123459",
-  "referenceCode": "1235",
+  "ourNumber": "1234590",
+  "referenceCode": "12356",
   "issuingBank": "BANCO_BRASIL",
   "issueData": {
     "modalityCode": "1",

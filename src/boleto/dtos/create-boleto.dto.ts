@@ -13,6 +13,9 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import { Account } from '../../account/entities/account.entity';
+import { IsEntityExists, IsUnique } from '../../core/validators';
+import { Boleto } from '../entities/boleto.entity';
 import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
 import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
 import { BoletoNegativationAgencyEnum } from '../enums/boleto-negativation-agency.enum copy';
@@ -23,6 +26,10 @@ export class CreateBoletoDto {
     description: 'Unique identifier of the account.',
   })
   @IsNumber()
+  @IsEntityExists({
+    context: { entity: Account, scope: { id: 'accountId' } },
+    message: 'accountId is not a valid account',
+  })
   accountId: number;
 
   @ApiPropertyOptional({
@@ -58,6 +65,13 @@ export class CreateBoletoDto {
       'referenceCode can only contain letters, numbers, dots and hyphens',
   })
   @IsOptional()
+  @IsUnique({
+    context: {
+      entity: Boleto,
+      scope: ['accountId', 'referenceCode'],
+    },
+    message: 'referenceCode already exists for this accountId',
+  })
   referenceCode?: string;
 
   @ApiProperty({
@@ -67,6 +81,13 @@ export class CreateBoletoDto {
   @IsString()
   @MaxLength(20)
   @Matches(/^[0-9]+$/, { message: 'ourNumber can only contain numbers' })
+  @IsUnique({
+    context: {
+      entity: Boleto,
+      scope: ['accountId', 'covenantId', 'ourNumber'],
+    },
+    message: 'ourNumber already exists for this accountId and covenantId',
+  })
   ourNumber: string;
 
   @ApiProperty({
