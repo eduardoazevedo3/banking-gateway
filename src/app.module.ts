@@ -3,6 +3,7 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BoletoModule } from './boleto/boleto.module';
@@ -20,6 +21,7 @@ import { RequestLoggerMiddleware } from './core/middlewares/request-logger.middl
       adapter: ExpressAdapter,
     }),
     CoreModule,
+    AccountModule,
     BoletoModule,
   ],
   controllers: [AppController],

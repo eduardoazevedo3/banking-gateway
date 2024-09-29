@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { DataSource, Equal } from 'typeorm';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { Account } from './entities/account.entity';
 
 @Injectable()
 export class AccountService {
-  create(createAccountDto: CreateAccountDto) {
-    return 'This action adds a new account';
+  constructor(private readonly connection: DataSource) {}
+
+  async findAll(): Promise<Account[]> {
+    return await this.connection.manager.find(Account);
   }
 
-  findAll() {
-    return `This action returns all account`;
+  async findOne(id: number): Promise<Account> {
+    return await this.connection.manager.findOneByOrFail(Account, {
+      id: Equal(id),
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} account`;
+  async create(accountDto: CreateAccountDto): Promise<Account> {
+    return await this.connection.manager.save(Account, {
+      ...accountDto,
+    });
   }
 
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    return `This action updates a #${id} account`;
+  async update(id: number, accountDto: UpdateAccountDto): Promise<Account> {
+    const account = await this.findOne(id);
+
+    return await this.connection.manager.save(Account, {
+      ...account,
+      ...accountDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} account`;
+  async remove(id: number): Promise<void> {
+    const account = await this.findOne(id);
+    await this.connection.manager.delete(Account, account.id);
   }
 }

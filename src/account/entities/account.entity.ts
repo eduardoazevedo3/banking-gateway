@@ -34,6 +34,7 @@ export class Account {
   @Column('enum', { name: 'document_type', enum: DocumentTypeEnum })
   documentType: DocumentTypeEnum;
 
+  @ApiProperty({ example: '123.456.789-09' })
   @Column('varchar', { name: 'document_number' })
   documentNumber: string;
 
