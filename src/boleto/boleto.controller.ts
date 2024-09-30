@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RecordValidationErrorDto } from '../core/dtos/record-validation-error.dto';
 import { BoletoService } from './boleto.service';
@@ -12,7 +12,7 @@ export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
   @Get(':id/register')
-  @ApiResponse({ status: 200, type: Boleto })
+  @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async register(
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
@@ -23,7 +23,7 @@ export class BoletoController {
   }
 
   @Get()
-  @ApiResponse({ status: 200, type: [Boleto] })
+  @ApiResponse({ status: HttpStatus.OK, type: [Boleto] })
   async findAll(
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
   ): Promise<Boleto[]> {
@@ -31,7 +31,7 @@ export class BoletoController {
   }
 
   @Get(':id')
-  @ApiResponse({ status: 200, type: Boleto })
+  @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async findOne(
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
@@ -40,8 +40,11 @@ export class BoletoController {
   }
 
   @Post()
-  @ApiResponse({ status: 201, type: Boleto })
-  @ApiResponse({ status: 400, type: RecordValidationErrorDto })
+  @ApiResponse({ status: HttpStatus.CREATED, type: Boleto })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: RecordValidationErrorDto,
+  })
   async create(
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Body() boleto: CreateBoletoDto,

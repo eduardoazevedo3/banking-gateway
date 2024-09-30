@@ -34,7 +34,6 @@ export class AccountService {
   }
 
   async remove(id: number): Promise<void> {
-    const account = await this.findOne(id);
-    await this.connection.manager.delete(Account, account.id);
+    await this.connection.manager.delete(Account, id);
   }
 }

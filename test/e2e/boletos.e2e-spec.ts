@@ -8,19 +8,22 @@ import {
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 import { Queue, QueueEvents } from 'bullmq';
+import { useContainer } from 'class-validator';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
-import { AppListenerModule } from '../../../src/app.listener.module';
-import { AppModule } from '../../../src/app.module';
-import { BancoBrasilService } from '../../../src/banking/banco-brasil/banco-brasil.service';
-import { BoletoBancoBrasilService } from '../../../src/banking/banco-brasil/boleto.banco-brasil.service';
-import { BoletoBankingService } from '../../../src/banking/boleto.banking.service';
-import { Boleto } from '../../../src/boleto/entities/boleto.entity';
-import { BoletoIssuingBankEnum } from '../../../src/boleto/enums/boleto-issuing-bank.enum';
-import { BoletoStatusEnum } from '../../../src/boleto/enums/boleto-status.enum';
-import { BadRequestFilter } from '../../../src/core/filters/bad-request.filter';
-import { EntityNotFoundFilter } from '../../../src/core/filters/entity-not-found.filter';
-import { boletoMock } from '../../mocks/boleto.mock';
+import { Account } from '../../src/account/entities/account.entity';
+import { AppListenerModule } from '../../src/app.listener.module';
+import { AppModule } from '../../src/app.module';
+import { BancoBrasilService } from '../../src/banking/banco-brasil/banco-brasil.service';
+import { BoletoBancoBrasilService } from '../../src/banking/banco-brasil/boleto.banco-brasil.service';
+import { BoletoBankingService } from '../../src/banking/boleto.banking.service';
+import { Boleto } from '../../src/boleto/entities/boleto.entity';
+import { BoletoIssuingBankEnum } from '../../src/boleto/enums/boleto-issuing-bank.enum';
+import { BoletoStatusEnum } from '../../src/boleto/enums/boleto-status.enum';
+import { BadRequestFilter } from '../../src/core/filters/bad-request.filter';
+import { EntityNotFoundFilter } from '../../src/core/filters/entity-not-found.filter';
+import { accountMock } from '../mocks/account.mock';
+import { boletoMock } from '../mocks/boleto.mock';
 
 describe('Boletos', () => {
   let app: INestApplication;
@@ -43,6 +46,7 @@ describe('Boletos', () => {
       type: VersioningType.URI,
       defaultVersion: '1',
     });
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
     await app.init();
   });
@@ -54,11 +58,16 @@ describe('Boletos', () => {
 
   describe('Endpoints', () => {
     let connection: DataSource;
+    let account: Account;
     let boleto: Boleto;
 
     beforeAll(async () => {
       connection = app.get<DataSource>(getDataSourceToken());
-      boleto = await connection.manager.save(Boleto, boletoMock());
+      account = await connection.manager.save(Account, accountMock());
+      boleto = await connection.manager.save(
+        Boleto,
+        boletoMock({ accountId: account.id }),
+      );
     });
 
     it('GET v1/:issuingBank/boletos', () => {
@@ -77,7 +86,7 @@ describe('Boletos', () => {
 
     it('POST v1/:issuingBank/boletos', () => {
       const boletoPayload = {
-        ...boletoMock(),
+        ...boletoMock({ accountId: account.id }),
         amount: '10.00',
         issueDate: '2024-08-10',
         dueDate: '2024-08-10',
@@ -100,7 +109,11 @@ describe('Boletos', () => {
 
     beforeAll(async () => {
       connection = app.get<DataSource>(getDataSourceToken());
-      boleto = await connection.manager.save(Boleto, boletoMock());
+      const account = await connection.manager.save(Account, accountMock());
+      boleto = await connection.manager.save(
+        Boleto,
+        boletoMock({ accountId: account.id }),
+      );
     });
 
     it('should register the boleto sucessfully', async () => {

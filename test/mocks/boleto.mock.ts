@@ -6,7 +6,7 @@ import { BoletoStatusEnum } from '../../src/boleto/enums/boleto-status.enum';
 export function boletoMock(boleto?: Partial<Boleto>): Boleto {
   return {
     id: faker.number.int({ min: 1 }),
-    accountId: faker.string.numeric(15),
+    accountId: null,
     covenantId: faker.string.numeric(15),
     status: BoletoStatusEnum.PENDING,
     referenceCode: faker.string.numeric(15),

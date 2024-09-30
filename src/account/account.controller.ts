@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -20,27 +22,33 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Get()
-  @ApiResponse({ status: 200, type: [Account] })
+  @ApiResponse({ status: HttpStatus.OK, type: [Account] })
   async findAll(): Promise<Account[]> {
     return this.accountService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({ status: 200, type: Account })
+  @ApiResponse({ status: HttpStatus.OK, type: Account })
   async findOne(@Param('id') id: string): Promise<Account> {
     return this.accountService.findOne(+id);
   }
 
   @Post()
-  @ApiResponse({ status: 201, type: Account })
-  @ApiResponse({ status: 400, type: RecordValidationErrorDto })
+  @ApiResponse({ status: HttpStatus.CREATED, type: Account })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: RecordValidationErrorDto,
+  })
   async create(@Body() createAccountDto: CreateAccountDto): Promise<Account> {
     return this.accountService.create(createAccountDto);
   }
 
   @Patch(':id')
-  @ApiResponse({ status: 200, type: Account })
-  @ApiResponse({ status: 400, type: RecordValidationErrorDto })
+  @ApiResponse({ status: HttpStatus.OK, type: Account })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: RecordValidationErrorDto,
+  })
   async update(
     @Param('id') id: string,
     @Body() updateAccountDto: UpdateAccountDto,
@@ -49,8 +57,12 @@ export class AccountController {
   }
 
   @Delete(':id')
-  @ApiResponse({ status: 204, type: Account })
-  @ApiResponse({ status: 400, type: RecordValidationErrorDto })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, type: Account })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: RecordValidationErrorDto,
+  })
   async remove(@Param('id') id: string): Promise<void> {
     await this.accountService.remove(+id);
   }
