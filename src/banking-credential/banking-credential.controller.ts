@@ -25,14 +25,19 @@ export class BankingCredentialController {
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [BankingCredential] })
-  findAll(): Promise<BankingCredential[]> {
-    return this.bankingCredentialService.findAll();
+  findAll(
+    @Param('accountId') accountId: string,
+  ): Promise<Partial<BankingCredential>[]> {
+    return this.bankingCredentialService.findAll(+accountId);
   }
 
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, type: BankingCredential })
-  findOne(@Param('id') id: string): Promise<BankingCredential> {
-    return this.bankingCredentialService.findOne(+id);
+  findOne(
+    @Param('accountId') accountId: string,
+    @Param('id') id: string,
+  ): Promise<BankingCredential> {
+    return this.bankingCredentialService.findOneOrFail(+accountId, +id);
   }
 
   @Post()
@@ -42,9 +47,13 @@ export class BankingCredentialController {
     type: RecordValidationErrorDto,
   })
   create(
+    @Param('accountId') accountId: string,
     @Body() createBankingCredentialDto: CreateBankingCredentialDto,
   ): Promise<BankingCredential> {
-    return this.bankingCredentialService.create(createBankingCredentialDto);
+    return this.bankingCredentialService.create(
+      +accountId,
+      createBankingCredentialDto,
+    );
   }
 
   @Patch(':id')
@@ -54,10 +63,12 @@ export class BankingCredentialController {
     type: RecordValidationErrorDto,
   })
   update(
+    @Param('accountId') accountId: string,
     @Param('id') id: string,
     @Body() updateBankingCredentialDto: UpdateBankingCredentialDto,
   ): Promise<BankingCredential> {
     return this.bankingCredentialService.update(
+      +accountId,
       +id,
       updateBankingCredentialDto,
     );
@@ -70,7 +81,10 @@ export class BankingCredentialController {
     status: HttpStatus.BAD_REQUEST,
     type: RecordValidationErrorDto,
   })
-  remove(@Param('id') id: string): Promise<void> {
-    return this.bankingCredentialService.remove(+id);
+  remove(
+    @Param('accountId') accountId: string,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.bankingCredentialService.remove(+accountId, +id);
   }
 }

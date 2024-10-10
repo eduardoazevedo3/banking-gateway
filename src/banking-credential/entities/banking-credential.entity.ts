@@ -21,13 +21,15 @@ export class BankingCredential {
   @Column('varchar', { name: 'reference_code' })
   referenceCode;
 
-  @ApiProperty({ example: 'Ab 12.345-6789' })
+  @ApiProperty({ example: '[ENCRYPTED]' })
   @Column('text')
   credentials;
 
+  @ApiProperty({ example: '2021-09-01T00:00:00.000Z' })
   @CreateDateColumn({ type: 'datetime', name: 'created_at', precision: 3 })
   createdAt;
 
+  @ApiProperty({ example: '2021-09-01T00:00:00.000Z' })
   @UpdateDateColumn({ type: 'datetime', name: 'updated_at', precision: 3 })
   updatedAt;
 }

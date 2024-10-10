@@ -1,27 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsNumber,
-  IsOptional,
-  IsString,
-  Matches,
-  MaxLength,
-} from 'class-validator';
-import { Account } from '../../account/entities/account.entity';
-import { IsEntityExists, IsUnique } from '../../core/validators';
+import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsUnique } from '../../core/validators';
 import { BankingCredential } from '../entities/banking-credential.entity';
 
 export class CreateBankingCredentialDto {
-  @ApiProperty({
-    example: '123',
-    description: 'Unique identifier of the account.',
-  })
-  @IsNumber()
-  @IsEntityExists({
-    context: { entity: Account, scope: { id: 'accountId' } },
-    message: 'accountId is not a valid account',
-  })
-  accountId;
-
   @ApiPropertyOptional({
     example: 'Ab.12345-6789',
     description:

@@ -19,7 +19,7 @@ export class BoletoService {
     return await this.connection.manager.findBy(Boleto<object>, boleto);
   }
 
-  async findOne(boleto: Partial<Boleto>): Promise<Boleto> {
+  async findOneOrFail(boleto: Partial<Boleto>): Promise<Boleto> {
     return await this.connection.manager.findOneByOrFail(Boleto<object>, {
       issuingBank: Equal(boleto.issuingBank),
       id: Equal(boleto.id),

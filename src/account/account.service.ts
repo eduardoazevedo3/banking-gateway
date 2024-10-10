@@ -12,7 +12,7 @@ export class AccountService {
     return await this.connection.manager.find(Account);
   }
 
-  async findOne(id: number): Promise<Account> {
+  async findOneOrFail(id: number): Promise<Account> {
     return await this.connection.manager.findOneByOrFail(Account, {
       id: Equal(id),
     });
@@ -25,7 +25,7 @@ export class AccountService {
   }
 
   async update(id: number, accountDto: UpdateAccountDto): Promise<Account> {
-    const account = await this.findOne(id);
+    const account = await this.findOneOrFail(id);
 
     return await this.connection.manager.save(Account, {
       ...account,

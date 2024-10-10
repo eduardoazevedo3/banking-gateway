@@ -17,7 +17,7 @@ export class BoletoController {
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
   ): Promise<Boleto> {
-    const boleto = await this.boletoService.findOne({ issuingBank, id });
+    const boleto = await this.boletoService.findOneOrFail({ issuingBank, id });
     await this.boletoService.register(boleto);
     return boleto;
   }
@@ -36,7 +36,7 @@ export class BoletoController {
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
   ): Promise<Boleto> {
-    return await this.boletoService.findOne({ issuingBank, id });
+    return await this.boletoService.findOneOrFail({ issuingBank, id });
   }
 
   @Post()
