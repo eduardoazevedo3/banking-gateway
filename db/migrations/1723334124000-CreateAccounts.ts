@@ -10,6 +10,7 @@ export class CreateAccounts1723334124000 implements MigrationInterface {
         description VARCHAR(255) NOT NULL,
         document_type VARCHAR(10) NOT NULL,
         document_number VARCHAR(50) NOT NULL,
+        credentials TEXT,
         created_at DATETIME(3) NOT NULL DEFAULT now(3),
 				updated_at DATETIME(3) NOT NULL DEFAULT now(3),
         UNIQUE INDEX idx_accounts_provider_account_id (provider_account_id),

@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BankingCredentialModule } from './banking-credential/banking-credential.module';
 import { BoletoModule } from './boleto/boleto.module';
 import { bullAsyncOptions } from './config/bull.config';
 import { databaseAsyncOptions } from './config/database.config';
@@ -24,7 +23,6 @@ import { RequestLoggerMiddleware } from './core/middlewares/request-logger.middl
     CoreModule,
     AccountModule,
     BoletoModule,
-    BankingCredentialModule,
   ],
   controllers: [AppController],
   providers: [AppService],

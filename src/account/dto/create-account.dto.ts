@@ -48,4 +48,9 @@ export class CreateAccountDto {
     message: 'documentNumber can only contain numbers, dots and hyphens',
   })
   documentNumber: string;
+
+  @ApiProperty({ example: 'Ab 12.345-6789' })
+  @MaxLength(99_999)
+  @IsString()
+  credentials: string;
 }

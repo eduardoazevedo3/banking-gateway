@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { Account } from '../../account/entities/account.entity';
 import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
 import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
 import { BoletoStatusEnum } from '../enums/boleto-status.enum';
@@ -193,4 +196,9 @@ export class Boleto<T = object> {
   @ApiPropertyOptional({ example: '2024-08-10T00:00:00.000Z' })
   @Column('datetime', { name: 'registered_at', precision: 3 })
   registeredAt?: Date;
+
+  // Relations
+
+  @ManyToOne(() => Account, (account) => account.boletos)
+  account: Relation<Account>;
 }

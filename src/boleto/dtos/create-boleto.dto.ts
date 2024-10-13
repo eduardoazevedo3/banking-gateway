@@ -32,14 +32,6 @@ export class CreateBoletoDto {
   })
   accountId: number;
 
-  @ApiPropertyOptional({
-    example: '123',
-    description: 'Unique identifier of the account.',
-  })
-  @IsOptional()
-  @IsNumber()
-  bankingCredentials?: number;
-
   @ApiProperty({
     example: 'Ab.12345-6789',
     description:

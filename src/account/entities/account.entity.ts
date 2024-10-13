@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { Boleto } from '../../boleto/entities/boleto.entity';
 import { DocumentTypeEnum } from '../../core/enums/document-type.enum';
 
 @Entity('accounts')
@@ -38,9 +41,18 @@ export class Account {
   @Column('varchar', { name: 'document_number' })
   documentNumber: string;
 
+  @ApiProperty({ example: '[ENCRYPTED]' })
+  @Column('text')
+  credentials: string;
+
   @CreateDateColumn({ type: 'datetime', name: 'created_at', precision: 3 })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'datetime', name: 'updated_at', precision: 3 })
   updatedAt: Date;
+
+  // Relations
+
+  @OneToMany(() => Boleto, (boleto) => boleto.account)
+  boletos: Relation<Boleto[]>;
 }

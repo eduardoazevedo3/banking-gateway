@@ -9,28 +9,41 @@ export class AccountService {
   constructor(private readonly connection: DataSource) {}
 
   async findAll(): Promise<Account[]> {
-    return await this.connection.manager.find(Account);
+    const accounts = await this.connection.manager.find(Account);
+
+    return accounts.map((a) => {
+      a.credentials = a.credentials && '[ENCRYPTED]';
+      return a;
+    });
   }
 
   async findOneOrFail(id: number): Promise<Account> {
-    return await this.connection.manager.findOneByOrFail(Account, {
+    const account = await this.connection.manager.findOneByOrFail(Account, {
       id: Equal(id),
     });
+
+    const credentials = account.credentials;
+    account.credentials = credentials && '[ENCRYPTED]';
+    return account;
   }
 
   async create(accountDto: CreateAccountDto): Promise<Account> {
-    return await this.connection.manager.save(Account, {
+    const account = await this.connection.manager.save(Account, {
       ...accountDto,
     });
+
+    return await this.findOneOrFail(account.id);
   }
 
   async update(id: number, accountDto: UpdateAccountDto): Promise<Account> {
     const account = await this.findOneOrFail(id);
 
-    return await this.connection.manager.save(Account, {
+    await this.connection.manager.save(Account, {
       ...account,
       ...accountDto,
     });
+
+    return await this.findOneOrFail(id);
   }
 
   async remove(id: number): Promise<void> {
