@@ -5,7 +5,6 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { Boleto } from '../../boleto/entities/boleto.entity';
@@ -54,5 +53,5 @@ export class Account {
   // Relations
 
   @OneToMany(() => Boleto, (boleto) => boleto.account)
-  boletos: Relation<Boleto[]>;
+  boletos: Boleto[];
 }

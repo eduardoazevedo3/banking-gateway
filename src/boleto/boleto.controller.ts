@@ -7,17 +7,22 @@ import { Boleto } from './entities/boleto.entity';
 import { BoletoIssuingBankEnum } from './enums/boleto-issuing-bank.enum';
 
 @ApiTags('Boletos')
-@Controller(':issuingBank/boletos')
+@Controller('accounts/:accountId/:issuingBank/boletos')
 export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
   @Get(':id/register')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async register(
+    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
   ): Promise<Boleto> {
-    const boleto = await this.boletoService.findOneOrFail({ issuingBank, id });
+    const boleto = await this.boletoService.findOneOrFail({
+      accountId,
+      issuingBank,
+      id,
+    });
     await this.boletoService.register(boleto);
     return boleto;
   }
@@ -25,18 +30,24 @@ export class BoletoController {
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [Boleto] })
   async findAll(
+    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
   ): Promise<Boleto[]> {
-    return await this.boletoService.findAll({ issuingBank });
+    return await this.boletoService.findAll({ accountId, issuingBank });
   }
 
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async findOne(
+    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
   ): Promise<Boleto> {
-    return await this.boletoService.findOneOrFail({ issuingBank, id });
+    return await this.boletoService.findOneOrFail({
+      accountId,
+      issuingBank,
+      id,
+    });
   }
 
   @Post()
@@ -46,9 +57,13 @@ export class BoletoController {
     type: RecordValidationErrorDto,
   })
   async create(
+    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Body() boleto: CreateBoletoDto,
   ): Promise<Boleto> {
-    return await this.boletoService.create(issuingBank, boleto);
+    return await this.boletoService.create(issuingBank, {
+      ...boleto,
+      accountId,
+    });
   }
 }

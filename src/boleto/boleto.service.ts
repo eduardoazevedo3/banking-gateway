@@ -20,9 +20,12 @@ export class BoletoService {
   }
 
   async findOneOrFail(boleto: Partial<Boleto>): Promise<Boleto> {
-    return await this.connection.manager.findOneByOrFail(Boleto<object>, {
-      issuingBank: Equal(boleto.issuingBank),
-      id: Equal(boleto.id),
+    return await this.connection.manager.findOneOrFail(Boleto<object>, {
+      where: {
+        issuingBank: Equal(boleto.issuingBank),
+        id: Equal(boleto.id),
+      },
+      relations: { account: true },
     });
   }
 
