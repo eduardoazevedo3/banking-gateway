@@ -6,7 +6,8 @@ content-type: application/json
 {
   "description": "Sacador Cobrancas S.A",
   "documentType": "CPF",
-  "documentNumber": "123.456.789-09"
+  "documentNumber": "123.456.789-09",
+  "credentials": "{\"appKey\":\"A001\",\"clientId\":\"1234\",\"clientSecret\":\"abc1234\"}"
 }
 
 ### Update Account

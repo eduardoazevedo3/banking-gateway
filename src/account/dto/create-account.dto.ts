@@ -52,5 +52,6 @@ export class CreateAccountDto {
   @ApiProperty({ example: 'Ab 12.345-6789' })
   @MaxLength(99_999)
   @IsString()
-  credentials: string;
+  @IsOptional()
+  credentials?: string;
 }
