@@ -61,9 +61,10 @@ export class BoletoController {
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Body() boleto: CreateBoletoDto,
   ): Promise<Boleto> {
-    return await this.boletoService.create(issuingBank, {
+    return await this.boletoService.create({
       ...boleto,
       accountId,
+      issuingBank,
     });
   }
 }

@@ -4,7 +4,6 @@ import { Job, Queue } from 'bullmq';
 import { DataSource, Equal } from 'typeorm';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
-import { BoletoIssuingBankEnum } from './enums/boleto-issuing-bank.enum';
 
 @Injectable()
 export class BoletoService {
@@ -29,14 +28,8 @@ export class BoletoService {
     });
   }
 
-  async create(
-    issuingBank: BoletoIssuingBankEnum,
-    boletoDto: CreateBoletoDto,
-  ): Promise<Boleto> {
-    return await this.connection.manager.save(Boleto, {
-      ...boletoDto,
-      issuingBank,
-    });
+  async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
+    return await this.connection.manager.save(Boleto, boletoDto);
   }
 
   async register(boleto): Promise<Job> {
