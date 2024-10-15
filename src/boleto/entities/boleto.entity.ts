@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { Account } from '../../account/entities/account.entity';
@@ -201,5 +202,5 @@ export class Boleto<T = object> {
 
   @ManyToOne(() => Account, (account) => account.boletos)
   @JoinColumn({ name: 'account_id' })
-  account: Account;
+  account?: Relation<Account>;
 }

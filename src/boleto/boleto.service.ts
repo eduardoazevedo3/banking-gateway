@@ -1,7 +1,7 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
-import { DataSource, Equal } from 'typeorm';
+import { DataSource, Equal, FindOptionsRelations } from 'typeorm';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
 
@@ -18,18 +18,26 @@ export class BoletoService {
     return await this.connection.manager.findBy(Boleto<object>, boleto);
   }
 
-  async findOneOrFail(boleto: Partial<Boleto>): Promise<Boleto> {
+  async findOneOrFail(
+    boleto: Partial<Boleto>,
+    relations: FindOptionsRelations<Boleto> | string[] = [],
+  ): Promise<Boleto> {
     return await this.connection.manager.findOneOrFail(Boleto<object>, {
       where: {
-        issuingBank: Equal(boleto.issuingBank),
+        ...(boleto.accountId && { accountId: Equal(boleto.accountId) }),
+        ...(boleto.issuingBank && { issuingBank: Equal(boleto.issuingBank) }),
         id: Equal(boleto.id),
       },
-      relations: { account: true },
+      relations,
     });
   }
 
   async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
     return await this.connection.manager.save(Boleto, boletoDto);
+  }
+
+  async update(boleto: Partial<Boleto>): Promise<Boleto> {
+    return await this.connection.manager.save(Boleto, boleto);
   }
 
   async register(boleto): Promise<Job> {

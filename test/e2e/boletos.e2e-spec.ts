@@ -70,21 +70,25 @@ describe('Boletos', () => {
       );
     });
 
-    it('GET v1/:issuingBank/boletos', () => {
+    it('GET v1/accounts/:accountId/:issuingBank/boletos', () => {
       return request(app.getHttpServer())
-        .get(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`)
+        .get(
+          `/v1/accounts/${boleto.accountId}/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`,
+        )
         .expect(200)
         .expect((res) => res.body.length > 0);
     });
 
-    it('GET v1/:issuingBank/boletos/:id', () => {
+    it('GET v1/accounts/:accountId/:issuingBank/boletos/:id', () => {
       return request(app.getHttpServer())
-        .get(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos/${boleto.id}`)
+        .get(
+          `/v1/accounts/${boleto.accountId}/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos/${boleto.id}`,
+        )
         .expect(200)
         .expect((res) => expect(res.body.id).toEqual(boleto.id));
     });
 
-    it('POST v1/:issuingBank/boletos', () => {
+    it('POST v1/accounts/:accountId/:issuingBank/boletos', () => {
       const boletoPayload = {
         ...boletoMock({ accountId: account.id }),
         amount: '10.00',
@@ -96,7 +100,9 @@ describe('Boletos', () => {
       };
 
       return request(app.getHttpServer())
-        .post(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`)
+        .post(
+          `/v1/accounts/${boleto.accountId}/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`,
+        )
         .send(boletoPayload)
         .expect(201)
         .expect((res) => expect(res.body.id).toEqual(boletoPayload.id));

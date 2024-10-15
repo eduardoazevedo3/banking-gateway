@@ -10,6 +10,7 @@ export function accountMock(account?: Partial<Account>): Account {
     description: 'Banking Gateway LTDA',
     documentType: DocumentTypeEnum.CNPJ,
     documentNumber: '90.890.230/0001-66',
+    credentials: '123456',
     createdAt: new Date(),
     updatedAt: new Date(),
     ...(account || {}),
