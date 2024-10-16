@@ -3,6 +3,7 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject } from '@nestjs/common';
 import { Method } from 'axios';
 import { plainToClass } from 'class-transformer';
+import * as crypto from 'crypto';
 import * as https from 'https';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AppConfigService } from '../../config/app-config.service';
@@ -27,9 +28,10 @@ export abstract class BancoBrasilService {
     method: Method,
     path: string,
     payload: any,
+    credentials: string,
   ): Promise<T> {
     const bancoBrasilConfig = this.configService.banking.bancoBrasil;
-    const credentials = await this.getCredentials();
+    const token = await this.getCredentials(credentials);
     const response = await firstValueFrom(
       this.httpService.request<T>({
         method: method,
@@ -37,7 +39,7 @@ export abstract class BancoBrasilService {
         data: payload,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `${credentials.tokenType} ${credentials.accessToken}`,
+          Authorization: `${token.tokenType} ${token.accessToken}`,
         },
         httpsAgent: this.getHttpAgent(),
       }),
@@ -46,13 +48,13 @@ export abstract class BancoBrasilService {
     return response.data;
   }
 
-  private async authenticate(): Promise<AuthApiDto> {
+  private async authenticate(credentials: string): Promise<AuthApiDto> {
     const response = await firstValueFrom(
       this.httpService
         .post<AuthApiDto>(`${this.oauthUrl}/oauth/token`, this.authPayload, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${this.encodedCredentials}`,
+            Authorization: `Basic ${this.encodedCredentials(credentials)}`,
           },
           httpsAgent: this.getHttpAgent(),
         })
@@ -68,15 +70,19 @@ export abstract class BancoBrasilService {
 
     const authData = plainToClass(AuthApiDto, response.data);
     const expiresIn = (authData.expiresIn - 15) * 1000;
-    await this.cacheManager.set(this.cacheKey, authData, expiresIn);
+    await this.cacheManager.set(
+      this.cacheKey(credentials),
+      authData,
+      expiresIn,
+    );
 
     return authData;
   }
 
-  private async getCredentials(): Promise<AuthApiDto> {
+  private async getCredentials(credentials: string): Promise<AuthApiDto> {
     const accessToken =
-      (await this.cacheManager.get<AuthApiDto>(this.cacheKey)) ||
-      (await this.authenticate());
+      (await this.cacheManager.get<AuthApiDto>(this.cacheKey(credentials))) ||
+      (await this.authenticate(credentials));
 
     return accessToken;
   }
@@ -101,11 +107,11 @@ export abstract class BancoBrasilService {
     }[this.getCurrentEnv];
   }
 
-  private get encodedCredentials(): string {
-    const bancoBrasilConfig = this.configService.banking.bancoBrasil;
+  private encodedCredentials(credentials: string): string {
+    const credentialsParsed = JSON.parse(credentials);
 
     return Buffer.from(
-      `${bancoBrasilConfig.clientId}:${bancoBrasilConfig.clientSecret}`,
+      `${credentialsParsed.clientId}:${credentialsParsed.clientSecret}`,
     ).toString('base64');
   }
 
@@ -116,8 +122,8 @@ export abstract class BancoBrasilService {
     };
   }
 
-  private get cacheKey(): string {
-    return 'cache-key';
+  private cacheKey(credentials: string): string {
+    return crypto.createHash('sha256').update(credentials).digest('hex');
   }
 
   private getHttpAgent(): https.Agent {

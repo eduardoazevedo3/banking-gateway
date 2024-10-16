@@ -83,7 +83,7 @@ describe('Accounts', () => {
     });
 
     it('PATCH v1/accounts/:id', () => {
-      const accountPayload = accountMock({ description: 'Test' });
+      const accountPayload = { ...account, description: 'Test' };
 
       return request(app.getHttpServer())
         .patch(`/v1/accounts/${account.id}`)
@@ -95,7 +95,7 @@ describe('Accounts', () => {
     });
 
     it('PATCH v1/accounts/:id with invalid payload', () => {
-      const accountPayload = { description: null };
+      const accountPayload = { ...account, description: null };
 
       return request(app.getHttpServer())
         .patch(`/v1/accounts/${account.id}`)

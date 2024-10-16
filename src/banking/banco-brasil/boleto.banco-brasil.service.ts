@@ -32,6 +32,7 @@ export class BoletoBancoBrasilService
         'POST',
         '/cobrancas/v2/boletos',
         payload,
+        boleto.account.credentials,
       );
 
       // {
