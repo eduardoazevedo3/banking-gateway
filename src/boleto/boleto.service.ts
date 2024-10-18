@@ -24,7 +24,6 @@ export class BoletoService {
   ): Promise<Boleto> {
     return await this.connection.manager.findOneOrFail(Boleto<object>, {
       where: {
-        ...(boleto.accountId && { accountId: Equal(boleto.accountId) }),
         ...(boleto.issuingBank && { issuingBank: Equal(boleto.issuingBank) }),
         id: Equal(boleto.id),
       },
