@@ -7,19 +7,17 @@ import { Boleto } from './entities/boleto.entity';
 import { BoletoIssuingBankEnum } from './enums/boleto-issuing-bank.enum';
 
 @ApiTags('Boletos')
-@Controller('accounts/:accountId/:issuingBank/boletos')
+@Controller(':issuingBank/boletos')
 export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
   @Get(':id/register')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async register(
-    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
   ): Promise<Boleto> {
     const boleto = await this.boletoService.findOneOrFail({
-      accountId,
       issuingBank,
       id,
     });
@@ -30,21 +28,18 @@ export class BoletoController {
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [Boleto] })
   async findAll(
-    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
   ): Promise<Boleto[]> {
-    return await this.boletoService.findAll({ accountId, issuingBank });
+    return await this.boletoService.findAll({ issuingBank });
   }
 
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async findOne(
-    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Param('id') id: number,
   ): Promise<Boleto> {
     return await this.boletoService.findOneOrFail({
-      accountId,
       issuingBank,
       id,
     });
@@ -57,13 +52,11 @@ export class BoletoController {
     type: RecordValidationErrorDto,
   })
   async create(
-    @Param('accountId') accountId: number,
     @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
     @Body() boleto: CreateBoletoDto,
   ): Promise<Boleto> {
     return await this.boletoService.create({
       ...boleto,
-      accountId,
       issuingBank,
     });
   }
