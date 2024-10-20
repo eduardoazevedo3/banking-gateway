@@ -100,7 +100,7 @@ export class Boleto<T = object> {
   @Column('integer', { name: 'receipt_days_limit', nullable: false })
   receiptDaysLimit?: number;
 
-  @ApiPropertyOptional({ example: '123' })
+  @ApiPropertyOptional({ example: 99 })
   @Column('varchar', { name: 'boleto_type_code', nullable: false })
   boletoTypeCode?: number;
 

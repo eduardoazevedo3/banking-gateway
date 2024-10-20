@@ -30,12 +30,12 @@ export abstract class BancoBrasilService {
     payload: any,
     credentials: string,
   ): Promise<T> {
-    const bancoBrasilConfig = this.configService.banking.bancoBrasil;
+    const credentialsParsed = JSON.parse(credentials);
     const token = await this.getCredentials(credentials);
     const response = await firstValueFrom(
       this.httpService.request<T>({
         method: method,
-        url: `${this.apiUrl}${path}?${this.appKeyName}=${bancoBrasilConfig.appKey}`,
+        url: `${this.apiUrl}${path}?${this.appKeyName}=${credentialsParsed.appKey}`,
         data: payload,
         headers: {
           'Content-Type': 'application/json',

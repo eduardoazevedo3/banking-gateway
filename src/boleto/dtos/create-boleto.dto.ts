@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
-  IsDecimal,
   IsEnum,
+  IsInt,
   IsNumber,
   IsObject,
   IsOptional,
@@ -19,6 +19,7 @@ import { Boleto } from '../entities/boleto.entity';
 import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
 import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
 import { BoletoNegativationAgencyEnum } from '../enums/boleto-negativation-agency.enum copy';
+import { BoletoTypeCodeEnum } from '../enums/boleto-type-code.enum';
 
 export class CreateBoletoDto {
   @ApiProperty({
@@ -36,6 +37,7 @@ export class CreateBoletoDto {
     example: 'Ab.12345-6789',
     description:
       'Unique identifier of the account. Valid characters: a-z, A-Z, 0-9, dot and hyphen',
+    pattern: '/^[a-zA-Z0-9.-]+$/',
   })
   @IsString()
   @MaxLength(64)
@@ -45,14 +47,15 @@ export class CreateBoletoDto {
   covenantId: string;
 
   @ApiPropertyOptional({
-    example: 'Ab.12345-6789',
+    example: 'AB-12345-6789',
     description:
       'Your unique reference code identifier of the boleto by account.' +
-      'Valid characters: a-z, A-Z, 0-9, dot and hyphen',
+      'Valid characters: A-Z, 0-9 and hyphen',
+    pattern: '/^[A-Z0-9-]+$/',
   })
   @IsString()
   @MaxLength(64)
-  @Matches(/^[a-zA-Z0-9.-]+$/, {
+  @Matches(/^[A-Z0-9-]+$/, {
     message:
       'referenceCode can only contain letters, numbers, dots and hyphens',
   })
@@ -103,38 +106,38 @@ export class CreateBoletoDto {
   dueDate: Date;
 
   @ApiProperty({ example: 100.0 })
-  @IsDecimal()
+  @IsNumber()
   amount: number;
 
   @ApiPropertyOptional({ example: 10.0 })
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   discountAmount?: number;
 
   @ApiPropertyOptional({ example: 10.0 })
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   fineAmount?: number;
 
   @ApiPropertyOptional({ example: 10.0 })
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   interestAmount?: number;
 
   @ApiPropertyOptional({ example: 10.0 })
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   feeAmount?: number;
 
   @ApiPropertyOptional({ example: 30 })
-  @IsNumber()
+  @IsInt()
   @IsOptional()
   @Min(1)
   @Max(90)
   protestDays?: number;
 
   @ApiPropertyOptional({ example: 30 })
-  @IsNumber()
+  @IsInt()
   @IsOptional()
   @Min(1)
   @Max(90)
@@ -150,16 +153,20 @@ export class CreateBoletoDto {
   negativationAgency?: BoletoNegativationAgencyEnum;
 
   @ApiPropertyOptional({ example: 30 })
-  @IsNumber()
+  @IsInt()
   @IsOptional()
   @Min(1)
   @Max(90)
   receiptDaysLimit?: number;
 
-  @ApiPropertyOptional({ example: '123' })
-  @IsNumber()
+  @ApiPropertyOptional({
+    enum: BoletoTypeCodeEnum,
+    enumName: 'BoletoTypeCodeEnum',
+    example: BoletoTypeCodeEnum.MERCANTILE_DUPLICATE,
+  })
+  @IsEnum(BoletoTypeCodeEnum)
   @IsOptional()
-  boletoTypeCode?: number;
+  boletoTypeCode?: BoletoTypeCodeEnum;
 
   @ApiPropertyOptional({ example: 'Duplicata Mercantil' })
   @IsString()
@@ -230,7 +237,7 @@ export class CreateBoletoDto {
   @Length(1, 20)
   payerAddressNumber: string;
 
-  @ApiProperty({ example: '123' })
+  @ApiProperty({ example: '12345-000' })
   @IsString()
   @Length(9, 9)
   payerZipCode: string;

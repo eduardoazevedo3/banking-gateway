@@ -2,9 +2,10 @@ import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RecordValidationErrorDto } from '../core/dtos/record-validation-error.dto';
 import { BoletoService } from './boleto.service';
+import { BoletoParamsDto } from './dtos/boleto-params.dto';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
+import { FindBoletoParamsDto } from './dtos/find-boleto-params.dto';
 import { Boleto } from './entities/boleto.entity';
-import { BoletoIssuingBankEnum } from './enums/boleto-issuing-bank.enum';
 
 @ApiTags('Boletos')
 @Controller(':issuingBank/boletos')
@@ -14,8 +15,7 @@ export class BoletoController {
   @Get(':id/register')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async register(
-    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
-    @Param('id') id: number,
+    @Param() { issuingBank, id }: FindBoletoParamsDto,
   ): Promise<Boleto> {
     const boleto = await this.boletoService.findOneOrFail({
       issuingBank,
@@ -27,17 +27,14 @@ export class BoletoController {
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [Boleto] })
-  async findAll(
-    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
-  ): Promise<Boleto[]> {
+  async findAll(@Param() { issuingBank }: BoletoParamsDto): Promise<Boleto[]> {
     return await this.boletoService.findAll({ issuingBank });
   }
 
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async findOne(
-    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
-    @Param('id') id: number,
+    @Param() { issuingBank, id }: FindBoletoParamsDto,
   ): Promise<Boleto> {
     return await this.boletoService.findOneOrFail({
       issuingBank,
@@ -52,7 +49,7 @@ export class BoletoController {
     type: RecordValidationErrorDto,
   })
   async create(
-    @Param('issuingBank') issuingBank: BoletoIssuingBankEnum,
+    @Param() { issuingBank }: BoletoParamsDto,
     @Body() boleto: CreateBoletoDto,
   ): Promise<Boleto> {
     return await this.boletoService.create({

@@ -33,7 +33,9 @@ export class CreateBoletoBancoBrasilTransform {
     boletoDto.boletoTypeDescription = boleto.boletoTypeDescription;
     boletoDto.partialReceiptPermissionIndicator = YesNoBoletoBancoBrasilEnum.NO;
     boletoDto.referenceCode = boleto.referenceCode?.padStart(13, '0');
-    boletoDto.ourNumber = boleto.ourNumber?.padStart(20, '0');
+    boletoDto.ourNumber =
+      `${boleto.issueData?.agreementNumber?.padStart(10, '0')}` +
+      `${boleto.ourNumber?.padStart(10, '0')}`;
     boletoDto.discount = this.discountPayload(boleto);
     boletoDto.interest = this.interestPayload(boleto);
     boletoDto.fine = this.finePayload(boleto);

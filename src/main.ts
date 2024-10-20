@@ -8,7 +8,7 @@ import { EntityNotFoundFilter } from './core/filters/entity-not-found.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalFilters(new EntityNotFoundFilter(), new BadRequestFilter());
   app.enableVersioning({
     type: VersioningType.URI,
