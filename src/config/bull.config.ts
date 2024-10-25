@@ -23,7 +23,7 @@ export const bullQueueDefaultOptions: RegisterQueueOptions = {
     attempts: 6,
     backoff: {
       type: 'exponential',
-      delay: 3000,
+      delay: 10_000,
     },
   },
 };

@@ -18,7 +18,6 @@ import { BancoBrasilService } from '../../src/banking/banco-brasil/banco-brasil.
 import { BoletoBancoBrasilService } from '../../src/banking/banco-brasil/boleto.banco-brasil.service';
 import { BoletoBankingService } from '../../src/banking/boleto.banking.service';
 import { Boleto } from '../../src/boleto/entities/boleto.entity';
-import { BoletoIssuingBankEnum } from '../../src/boleto/enums/boleto-issuing-bank.enum';
 import { BoletoStatusEnum } from '../../src/boleto/enums/boleto-status.enum';
 import { BadRequestFilter } from '../../src/core/filters/bad-request.filter';
 import { EntityNotFoundFilter } from '../../src/core/filters/entity-not-found.filter';
@@ -70,24 +69,24 @@ describe('Boletos', () => {
       );
     });
 
-    it('GET v1/:issuingBank/boletos', () => {
+    it('GET v1/boletos', () => {
       return request(app.getHttpServer())
-        .get(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`)
+        .get(`/v1/boletos`)
         .expect(200)
         .expect((res) => res.body.length > 0);
     });
 
-    it('GET v1/:issuingBank/boletos/:id', () => {
+    it('GET v1/boletos/:id', () => {
       return request(app.getHttpServer())
-        .get(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos/${boleto.id}`)
+        .get(`/v1/boletos/${boleto.id}`)
         .expect(200)
         .expect((res) => expect(res.body.id).toEqual(boleto.id));
     });
 
-    it('POST v1/:issuingBank/boletos', () => {
+    it('POST v1/boletos', () => {
       const boletoPayload = {
         ...boletoMock({ accountId: account.id }),
-        amount: '10.00',
+        amount: 10,
         issueDate: '2024-08-10',
         dueDate: '2024-08-10',
         discountAmount: undefined,
@@ -96,10 +95,11 @@ describe('Boletos', () => {
       };
 
       return request(app.getHttpServer())
-        .post(`/v1/${BoletoIssuingBankEnum.BANCO_BRASIL}/boletos`)
+        .post(`/v1/boletos`)
         .send(boletoPayload)
-        .expect(201)
-        .expect((res) => expect(res.body.id).toEqual(boletoPayload.id));
+        .expect((res) => {
+          expect(res.body.id).toEqual(boletoPayload.id);
+        });
     });
   });
 

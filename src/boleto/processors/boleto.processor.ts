@@ -25,7 +25,7 @@ export class BoletoProcessor extends WorkerHost {
 
     boleto = await this.boletoBankingService.register(boleto);
 
-    await this.boletoService.update(boleto);
+    await this.boletoService.update(boleto.id, boleto);
   }
 
   @OnWorkerEvent('completed')
