@@ -13,8 +13,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { Account } from '../../account/entities/account.entity';
-import { IsEntityExists, IsUnique } from '../../core/validators';
+import { IsUnique } from '../../core/validators';
 import { Boleto } from '../entities/boleto.entity';
 import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
 import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
@@ -27,10 +26,6 @@ export class CreateBoletoDto {
     description: 'Unique identifier of the account.',
   })
   @IsNumber()
-  @IsEntityExists({
-    context: { entity: Account, scope: { id: 'accountId' } },
-    message: 'accountId is not a valid account',
-  })
   accountId: number;
 
   @ApiProperty({

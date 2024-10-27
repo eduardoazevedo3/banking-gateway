@@ -6,9 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeaders, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Account as AccountEntity } from '../account/entities/account.entity';
+import { Account } from '../core/decorators/account.decorator';
 import { RecordValidationErrorDto } from '../core/dtos/record-validation-error.dto';
+import { AccountGuard } from '../core/guards/account.guard';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { FindBoletoParamsDto } from './dtos/find-boleto-params.dto';
@@ -17,6 +21,7 @@ import { Boleto } from './entities/boleto.entity';
 
 @ApiTags('Boletos')
 @Controller('boletos')
+@UseGuards(AccountGuard)
 export class BoletoController {
   constructor(private readonly boletoService: BoletoService) {}
 
@@ -30,14 +35,22 @@ export class BoletoController {
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [Boleto] })
-  async findAll(): Promise<Boleto[]> {
-    return await this.boletoService.findAll({});
+  @ApiHeaders([{ name: 'account-id', required: true }])
+  async findAll(@Account() account: AccountEntity): Promise<Boleto[]> {
+    return await this.boletoService.findAll({ id: account.id });
   }
 
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
-  async findOne(@Param() { id }: FindBoletoParamsDto): Promise<Boleto> {
-    return await this.boletoService.findOneOrFail({ id });
+  @ApiHeaders([{ name: 'account-id', required: true }])
+  async findOne(
+    @Param() { id }: FindBoletoParamsDto,
+    @Account() account: AccountEntity,
+  ): Promise<Boleto> {
+    return await this.boletoService.findOneOrFail({
+      accountId: account.id,
+      id,
+    });
   }
 
   @Post()
@@ -46,8 +59,15 @@ export class BoletoController {
     status: HttpStatus.BAD_REQUEST,
     type: RecordValidationErrorDto,
   })
-  async create(@Body() boleto: CreateBoletoDto): Promise<Boleto> {
-    return await this.boletoService.create(boleto);
+  @ApiHeaders([{ name: 'account-id', required: true }])
+  async create(
+    @Body() boleto: CreateBoletoDto,
+    @Account() account: AccountEntity,
+  ): Promise<Boleto> {
+    return await this.boletoService.create({
+      ...boleto,
+      accountId: account.id,
+    });
   }
 
   @Patch(':id')
@@ -56,10 +76,16 @@ export class BoletoController {
     status: HttpStatus.BAD_REQUEST,
     type: RecordValidationErrorDto,
   })
+  @ApiHeaders([{ name: 'account-id', required: true }])
   async update(
     @Param() { id }: FindBoletoParamsDto,
-    @Body() boleto: UpdateBoletoDto,
+    @Account() account: AccountEntity,
+    @Body() boletoDto: UpdateBoletoDto,
   ): Promise<Boleto> {
-    return await this.boletoService.update(id, boleto);
+    const boleto = await this.boletoService.findOneOrFail({
+      accountId: account.id,
+      id,
+    });
+    return await this.boletoService.update(boleto.id, boletoDto);
   }
 }

@@ -24,7 +24,10 @@ export class BoletoService {
     relations: FindOptionsRelations<Boleto> | string[] = [],
   ): Promise<Boleto> {
     return await this.connection.manager.findOneOrFail(Boleto<object>, {
-      where: { id: Equal(boleto.id) },
+      where: {
+        ...(boleto.accountId ? { accountId: Equal(boleto.accountId) } : {}),
+        id: Equal(boleto.id),
+      },
       relations,
     });
   }
@@ -35,13 +38,10 @@ export class BoletoService {
   }
 
   async update(id: number, boletoDto: UpdateBoletoDto): Promise<Boleto> {
-    const boleto = await this.findOneOrFail({ id });
-
     await this.connection.manager.save(Boleto, {
-      ...boleto,
+      id,
       ...boletoDto,
     });
-
     return await this.findOneOrFail({ id });
   }
 

@@ -72,6 +72,7 @@ describe('Boletos', () => {
     it('GET v1/boletos', () => {
       return request(app.getHttpServer())
         .get(`/v1/boletos`)
+        .set('account-id', account.id.toString())
         .expect(200)
         .expect((res) => res.body.length > 0);
     });
@@ -79,6 +80,7 @@ describe('Boletos', () => {
     it('GET v1/boletos/:id', () => {
       return request(app.getHttpServer())
         .get(`/v1/boletos/${boleto.id}`)
+        .set('account-id', account.id.toString())
         .expect(200)
         .expect((res) => expect(res.body.id).toEqual(boleto.id));
     });
@@ -96,6 +98,7 @@ describe('Boletos', () => {
 
       return request(app.getHttpServer())
         .post(`/v1/boletos`)
+        .set('account-id', account.id.toString())
         .send(boletoPayload)
         .expect((res) => {
           expect(res.body.id).toEqual(boletoPayload.id);

@@ -27,6 +27,17 @@ export class AccountService {
     return account;
   }
 
+  async findOne(id: number): Promise<Account> {
+    const account = await this.connection.manager.findOneBy(Account, {
+      id: Equal(id),
+    });
+    if (!account) return;
+
+    const credentials = account.credentials;
+    account.credentials = credentials && '[ENCRYPTED]';
+    return account;
+  }
+
   async create(accountDto: CreateAccountDto): Promise<Account> {
     const account = await this.connection.manager.save(Account, {
       ...accountDto,
