@@ -1,21 +1,25 @@
 import { HttpService } from '@nestjs/axios';
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject } from '@nestjs/common';
+import { Cache } from '@nestjs/cache-manager';
+import { Injectable } from '@nestjs/common';
 import { Method } from 'axios';
 import { plainToClass } from 'class-transformer';
 import * as crypto from 'crypto';
 import * as https from 'https';
 import { catchError, firstValueFrom } from 'rxjs';
-import { AppConfigService } from '../../config/app-config.service';
 import { AuthBadRequestException } from '../exceptions/auth-bad-request.exception';
 import { AuthApiDto } from './dtos/auth-api.dto';
 
-export abstract class BancoBrasilService {
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly configService: AppConfigService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+@Injectable()
+export class BancoBrasilClient {
+  private readonly httpService: HttpService;
+  private credentials: string;
+  private cacheManager: Cache;
+
+  constructor(cacheManager: Cache, credentials: string) {
+    this.httpService = new HttpService();
+    this.credentials = credentials;
+    this.cacheManager = cacheManager;
+  }
 
   protected get apiUrl(): string {
     return {
@@ -24,14 +28,9 @@ export abstract class BancoBrasilService {
     }[this.getCurrentEnv];
   }
 
-  protected async request<T>(
-    method: Method,
-    path: string,
-    payload: any,
-    credentials: string,
-  ): Promise<T> {
-    const credentialsParsed = JSON.parse(credentials);
-    const token = await this.getCredentials(credentials);
+  async request<T>(method: Method, path: string, payload: any): Promise<T> {
+    const credentialsParsed = JSON.parse(this.credentials);
+    const token = await this.getCredentials();
     const response = await firstValueFrom(
       this.httpService.request<T>({
         method: method,
@@ -48,13 +47,13 @@ export abstract class BancoBrasilService {
     return response.data;
   }
 
-  private async authenticate(credentials: string): Promise<AuthApiDto> {
+  private async authenticate(): Promise<AuthApiDto> {
     const response = await firstValueFrom(
       this.httpService
         .post<AuthApiDto>(`${this.oauthUrl}/oauth/token`, this.authPayload, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${this.encodedCredentials(credentials)}`,
+            Authorization: `Basic ${this.encodedCredentials()}`,
           },
           httpsAgent: this.getHttpAgent(),
         })
@@ -67,22 +66,16 @@ export abstract class BancoBrasilService {
           }),
         ),
     );
-
     const authData = plainToClass(AuthApiDto, response.data);
     const expiresIn = (authData.expiresIn - 15) * 1000;
-    await this.cacheManager.set(
-      this.cacheKey(credentials),
-      authData,
-      expiresIn,
-    );
-
+    await this.cacheManager.set(this.cacheKey(), authData, expiresIn);
     return authData;
   }
 
-  private async getCredentials(credentials: string): Promise<AuthApiDto> {
+  private async getCredentials(): Promise<AuthApiDto> {
     const accessToken =
-      (await this.cacheManager.get<AuthApiDto>(this.cacheKey(credentials))) ||
-      (await this.authenticate(credentials));
+      (await this.cacheManager.get<AuthApiDto>(this.cacheKey())) ||
+      (await this.authenticate());
 
     return accessToken;
   }
@@ -95,9 +88,7 @@ export abstract class BancoBrasilService {
   }
 
   private get getCurrentEnv(): string {
-    return this.configService.app.env === 'production'
-      ? 'production'
-      : 'sandbox';
+    return process.env.NODE_ENV === 'production' ? 'production' : 'sandbox';
   }
 
   private get appKeyName(): string {
@@ -107,8 +98,8 @@ export abstract class BancoBrasilService {
     }[this.getCurrentEnv];
   }
 
-  private encodedCredentials(credentials: string): string {
-    const credentialsParsed = JSON.parse(credentials);
+  private encodedCredentials(): string {
+    const credentialsParsed = JSON.parse(this.credentials);
 
     return Buffer.from(
       `${credentialsParsed.clientId}:${credentialsParsed.clientSecret}`,
@@ -122,8 +113,8 @@ export abstract class BancoBrasilService {
     };
   }
 
-  private cacheKey(credentials: string): string {
-    return crypto.createHash('sha256').update(credentials).digest('hex');
+  private cacheKey(): string {
+    return crypto.createHash('sha256').update(this.credentials).digest('hex');
   }
 
   private getHttpAgent(): https.Agent {

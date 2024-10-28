@@ -17,14 +17,11 @@ export class BoletoProcessor extends WorkerHost {
     Logger.log(
       `Processing boleto job "${job.id}" of type "${job.name}" with data ${JSON.stringify(job.data)}`,
     );
-
     let boleto = await this.boletoService.findOneOrFail(
       { id: job.data.boletoId },
       { account: true },
     );
-
     boleto = await this.boletoBankingService.register(boleto);
-
     await this.boletoService.update(boleto.id, boleto);
   }
 

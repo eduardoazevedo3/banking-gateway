@@ -38,10 +38,7 @@ export class BoletoService {
   }
 
   async update(id: number, boletoDto: UpdateBoletoDto): Promise<Boleto> {
-    await this.connection.manager.save(Boleto, {
-      id,
-      ...boletoDto,
-    });
+    await this.connection.manager.save(Boleto, { id, ...boletoDto });
     return await this.findOneOrFail({ id });
   }
 

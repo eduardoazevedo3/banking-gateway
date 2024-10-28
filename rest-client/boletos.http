@@ -21,8 +21,8 @@ content-type: application/json
   "discountAmount": "0",
   "fineAmount": "0",
   "interestAmount": "0",
-  "boletoTypeCode": 99,
-  "boletoTypeDescription": "Outros",
+  "boletoTypeCode": 1,
+  "boletoTypeDescription": "Duplicata Mercantil",
   "beneficiaryType": "CNPJ",
   "beneficiaryDocument": "90.890.230/0001-66",
   "beneficiaryName": "Sacador Cobrancas S.A",
@@ -42,3 +42,4 @@ content-type: application/json
 
 GET http://localhost:3000/v1/boletos/1/register HTTP/1.1
 content-type: application/json
+account-id: 1

@@ -14,8 +14,7 @@ import { DataSource } from 'typeorm';
 import { Account } from '../../src/account/entities/account.entity';
 import { AppListenerModule } from '../../src/app.listener.module';
 import { AppModule } from '../../src/app.module';
-import { BancoBrasilService } from '../../src/banking/banco-brasil/banco-brasil.service';
-import { BoletoBancoBrasilService } from '../../src/banking/banco-brasil/boleto.banco-brasil.service';
+import { BancoBrasilClient } from '../../src/banking/banco-brasil/banco-brasil.client';
 import { BoletoBankingService } from '../../src/banking/boleto.banking.service';
 import { Boleto } from '../../src/boleto/entities/boleto.entity';
 import { BoletoStatusEnum } from '../../src/boleto/enums/boleto-status.enum';
@@ -41,6 +40,7 @@ describe('Boletos', () => {
     app = module.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalFilters(new EntityNotFoundFilter(), new BadRequestFilter());
+    app.useLogger(false);
     app.enableVersioning({
       type: VersioningType.URI,
       defaultVersion: '1',
@@ -125,7 +125,7 @@ describe('Boletos', () => {
         'register',
       );
       const boletoBancoBrasilSpy = jest.spyOn(
-        BoletoBancoBrasilService.prototype as any,
+        BancoBrasilClient.prototype,
         'request',
       );
 
@@ -148,14 +148,11 @@ describe('Boletos', () => {
     });
 
     it('should not register the boleto with error', async () => {
-      const boletoBancoBrasilSpy = jest.spyOn(
-        BancoBrasilService.prototype as any,
-        'request',
-      );
-
-      boletoBancoBrasilSpy.mockImplementation(() => {
-        new BadRequestException();
-      });
+      jest
+        .spyOn(BancoBrasilClient.prototype, 'request')
+        .mockImplementation(() => {
+          throw new BadRequestException();
+        });
 
       try {
         const job = await queue.add(
@@ -165,7 +162,8 @@ describe('Boletos', () => {
         );
         await job.waitUntilFinished(queueEvents);
       } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toEqual('"Bad Request"');
       }
     });
   });
