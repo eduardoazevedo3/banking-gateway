@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { AccountService } from '../../account/account.service';
+import { AccountService } from '../../modules/account/account.service';
 
 @Injectable()
 export class AccountGuard implements CanActivate {

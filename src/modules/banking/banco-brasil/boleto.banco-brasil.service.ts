@@ -83,9 +83,10 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
       boleto.billingContractNumber = responseData.numeroContratoCobranca;
       return boleto;
     } catch (error) {
-      throw new BoletoBancoBrasilException(
-        JSON.stringify(error.response?.data || error.message),
-      );
+      throw new BoletoBancoBrasilException({
+        code: error.code,
+        message: JSON.stringify(error.response?.data || error.message),
+      });
     }
   }
 }

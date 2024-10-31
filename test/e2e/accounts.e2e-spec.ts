@@ -8,11 +8,11 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 import { useContainer } from 'class-validator';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
-import { Account } from '../../src/account/entities/account.entity';
 import { AppListenerModule } from '../../src/app.listener.module';
 import { AppModule } from '../../src/app.module';
 import { BadRequestFilter } from '../../src/core/filters/bad-request.filter';
 import { EntityNotFoundFilter } from '../../src/core/filters/entity-not-found.filter';
+import { Account } from '../../src/modules/account/entities/account.entity';
 import { accountMock } from '../mocks/account.mock';
 
 describe('Accounts', () => {

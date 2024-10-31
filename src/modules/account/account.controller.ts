@@ -10,7 +10,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RecordValidationErrorDto } from '../core/dtos/record-validation-error.dto';
+import { RecordValidationErrorDto } from '../../core/dtos/record-validation-error.dto';
 import { AccountService } from './account.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';

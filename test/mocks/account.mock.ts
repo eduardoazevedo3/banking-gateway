@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { Account } from '../../src/account/entities/account.entity';
 import { DocumentTypeEnum } from '../../src/core/enums/document-type.enum';
+import { Account } from '../../src/modules/account/entities/account.entity';
 
 export function accountMock(account?: Partial<Account>): Account {
   return {

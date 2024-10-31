@@ -7,7 +7,7 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
-import { DocumentTypeEnum } from '../../core/enums/document-type.enum';
+import { DocumentTypeEnum } from '../../../core/enums/document-type.enum';
 
 export class CreateAccountDto {
   @ApiPropertyOptional({

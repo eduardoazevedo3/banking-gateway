@@ -13,7 +13,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { IsUnique } from '../../core/validators';
+import { IsUnique } from '../../../core/validators';
 import { Boleto } from '../entities/boleto.entity';
 import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
 import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';

@@ -8,8 +8,8 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { DocumentTypeEnum } from '../../../core/enums/document-type.enum';
 import { Boleto } from '../../boleto/entities/boleto.entity';
-import { DocumentTypeEnum } from '../../core/enums/document-type.enum';
 
 @Entity('accounts')
 export class Account {

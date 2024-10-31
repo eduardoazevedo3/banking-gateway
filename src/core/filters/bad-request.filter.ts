@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
-import { RecordValidationException } from '../../boleto/exceptions/record-validation.exception';
+import { RecordValidationException } from '../../modules/boleto/exceptions/record-validation.exception';
 
 @Catch(RecordValidationException)
 export class BadRequestFilter implements ExceptionFilter {

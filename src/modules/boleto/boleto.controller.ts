@@ -9,10 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiHeaders, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Account } from '../../core/decorators/account.decorator';
+import { RecordValidationErrorDto } from '../../core/dtos/record-validation-error.dto';
+import { AccountGuard } from '../../core/guards/account.guard';
 import { Account as AccountEntity } from '../account/entities/account.entity';
-import { Account } from '../core/decorators/account.decorator';
-import { RecordValidationErrorDto } from '../core/dtos/record-validation-error.dto';
-import { AccountGuard } from '../core/guards/account.guard';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { FindBoletoParamsDto } from './dtos/find-boleto-params.dto';

@@ -11,15 +11,15 @@ import { Queue, QueueEvents } from 'bullmq';
 import { useContainer } from 'class-validator';
 import * as request from 'supertest';
 import { DataSource } from 'typeorm';
-import { Account } from '../../src/account/entities/account.entity';
 import { AppListenerModule } from '../../src/app.listener.module';
 import { AppModule } from '../../src/app.module';
-import { BancoBrasilClient } from '../../src/banking/banco-brasil/banco-brasil.client';
-import { BoletoBankingService } from '../../src/banking/boleto.banking.service';
-import { Boleto } from '../../src/boleto/entities/boleto.entity';
-import { BoletoStatusEnum } from '../../src/boleto/enums/boleto-status.enum';
 import { BadRequestFilter } from '../../src/core/filters/bad-request.filter';
 import { EntityNotFoundFilter } from '../../src/core/filters/entity-not-found.filter';
+import { Account } from '../../src/modules/account/entities/account.entity';
+import { BancoBrasilClient } from '../../src/modules/banking/banco-brasil/banco-brasil.client';
+import { BoletoBankingService } from '../../src/modules/banking/boleto.banking.service';
+import { Boleto } from '../../src/modules/boleto/entities/boleto.entity';
+import { BoletoStatusEnum } from '../../src/modules/boleto/enums/boleto-status.enum';
 import { accountMock } from '../mocks/account.mock';
 import { boletoMock } from '../mocks/boleto.mock';
 
@@ -151,7 +151,10 @@ describe('Boletos', () => {
       jest
         .spyOn(BancoBrasilClient.prototype, 'request')
         .mockImplementation(() => {
-          throw new BadRequestException();
+          throw new BadRequestException({
+            code: 400,
+            message: 'Bad Request',
+          });
         });
 
       try {
