@@ -1,5 +1,5 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { Boleto } from '../../boleto/entities/boleto.entity';
 import { BoletoStatusEnum } from '../../boleto/enums/boleto-status.enum';
@@ -66,7 +66,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     );
 
     try {
-      const responseData = await bancoBrasilClient.request<any>(
+      const { data: responseData } = await bancoBrasilClient.request<any>(
         'POST',
         '/cobrancas/v2/boletos',
         payload,
@@ -83,6 +83,22 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
       boleto.billingContractNumber = responseData.numeroContratoCobranca;
       return boleto;
     } catch (error) {
+      // rescue RestClient::BadRequest => e
+      //   @erros = JSON.parse(e.response.body)['erros']
+      // rescue RestClient::Forbidden => e
+      //   body = JSON.parse(e.response.body)
+      //   @erros = [{ 'mensagem' => "#{body['error']}: #{body['message']}" }]
+      // rescue StandardError => e
+      //   Rails.logger.error("[Banco do Brasil] Registar boleto: #{e.message}")
+      //   boleto.update!(status: 'O', motivo_rejeicao: "Erro ao tentar registrar o boleto: #{e.message}")
+      //   raise e
+      // end
+      if (error.response?.status === HttpStatus.BAD_REQUEST) {
+        throw new BoletoBancoBrasilException({
+          code: error.code,
+          message: JSON.stringify(error.response?.data),
+        });
+      }
       throw new BoletoBancoBrasilException({
         code: error.code,
         message: JSON.stringify(error.response?.data || error.message),
