@@ -28,7 +28,7 @@ export class BancoBrasilClient {
     }[this.getCurrentEnv];
   }
 
-  async request<T>(
+  async request<T = unknown>(
     method: Method,
     path: string,
     payload: any,

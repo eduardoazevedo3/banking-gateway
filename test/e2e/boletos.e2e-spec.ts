@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
+import { AxiosResponse } from 'axios';
 import { Queue, QueueEvents } from 'bullmq';
 import { useContainer } from 'class-validator';
 import * as request from 'supertest';
@@ -129,7 +130,15 @@ describe('Boletos', () => {
         'request',
       );
 
-      boletoBancoBrasilSpy.mockReturnValue(Promise.resolve({}));
+      boletoBancoBrasilSpy.mockResolvedValue(
+        Promise.resolve({
+          data: {},
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: {},
+        } as AxiosResponse<any, any>),
+      );
 
       const job = await queue.add(
         'boleto',
