@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Cache } from '@nestjs/cache-manager';
 import { Injectable } from '@nestjs/common';
-import { Method } from 'axios';
+import { AxiosResponse, Method } from 'axios';
 import { plainToClass } from 'class-transformer';
 import * as crypto from 'crypto';
 import * as https from 'https';
@@ -28,7 +28,11 @@ export class BancoBrasilClient {
     }[this.getCurrentEnv];
   }
 
-  async request<T>(method: Method, path: string, payload: any): Promise<T> {
+  async request<T = unknown>(
+    method: Method,
+    path: string,
+    payload: any,
+  ): Promise<AxiosResponse> {
     const credentialsParsed = JSON.parse(this.credentials);
     const token = await this.getCredentials();
     const response = await firstValueFrom(
@@ -44,7 +48,7 @@ export class BancoBrasilClient {
       }),
     );
 
-    return response.data;
+    return response;
   }
 
   private async authenticate(): Promise<AuthApiDto> {

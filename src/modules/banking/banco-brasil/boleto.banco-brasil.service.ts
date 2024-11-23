@@ -66,7 +66,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     );
 
     try {
-      const responseData = await bancoBrasilClient.request<any>(
+      const { data: responseData } = await bancoBrasilClient.request(
         'POST',
         '/cobrancas/v2/boletos',
         payload,
@@ -81,6 +81,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
       boleto.barcode = responseData.codigoBarraNumerico;
       boleto.digitableLine = responseData.linhaDigitavel;
       boleto.billingContractNumber = responseData.numeroContratoCobranca;
+
       return boleto;
     } catch (error) {
       throw new BoletoBancoBrasilException({

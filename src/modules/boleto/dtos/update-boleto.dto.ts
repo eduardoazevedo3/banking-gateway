@@ -1,21 +1,21 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsEnum, IsNumber } from 'class-validator';
 import { BoletoStatusEnum } from '../enums/boleto-status.enum';
 
 export class UpdateBoletoDto {
-  @ApiProperty({ example: '2024-08-10' })
+  @ApiPropertyOptional({ example: '2024-08-10' })
   @IsDateString()
-  dueDate: Date;
+  dueDate?: Date;
 
-  @ApiProperty({ example: 100.0 })
+  @ApiPropertyOptional({ example: 100.0 })
   @IsNumber()
-  amount: number;
+  amount?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: BoletoStatusEnum,
     enumName: 'BoletoStatusEnum',
     example: BoletoStatusEnum.CANCELED,
   })
   @IsEnum(BoletoStatusEnum)
-  status: BoletoStatusEnum;
+  status?: BoletoStatusEnum;
 }
