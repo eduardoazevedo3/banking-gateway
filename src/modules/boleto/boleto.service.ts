@@ -6,6 +6,10 @@ import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { UpdateBoletoDto } from './dtos/update-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
 
+type BoletoOptions = {
+  skipFind?: boolean;
+};
+
 @Injectable()
 export class BoletoService {
   constructor(
@@ -32,13 +36,22 @@ export class BoletoService {
     });
   }
 
-  async create(boletoDto: CreateBoletoDto): Promise<Boleto> {
+  async create(
+    boletoDto: CreateBoletoDto,
+    options?: BoletoOptions,
+  ): Promise<Boleto> {
     const boleto = await this.connection.manager.save(Boleto, boletoDto);
+    if (options?.skipFind) return boleto;
     return await this.findOneOrFail({ id: boleto.id });
   }
 
-  async update(id: number, boletoDto: UpdateBoletoDto): Promise<Boleto> {
+  async update(
+    id: number,
+    boletoDto: UpdateBoletoDto,
+    options?: BoletoOptions,
+  ): Promise<Boleto> {
     await this.connection.manager.save(Boleto, { id, ...boletoDto });
+    if (options?.skipFind) return;
     return await this.findOneOrFail({ id });
   }
 

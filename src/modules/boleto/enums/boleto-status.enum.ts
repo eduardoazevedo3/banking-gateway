@@ -1,5 +1,7 @@
 export enum BoletoStatusEnum {
   PENDING = 'PENDING',
+  REGISTERING = 'REGISTERING',
+  FAILED = 'FAILED',
   OPENED = 'OPENED',
   PAID = 'PAID',
   CANCELED = 'CANCELED',
