@@ -21,11 +21,6 @@ import { BoletoNegativationAgencyEnum } from '../enums/boleto-negativation-agenc
 import { BoletoTypeCodeEnum } from '../enums/boleto-type-code.enum';
 
 export class CreateBoletoDto {
-  @ApiProperty({
-    example: '123',
-    description: 'Unique identifier of the account.',
-  })
-  @IsNumber()
   accountId: number;
 
   @ApiProperty({
@@ -55,13 +50,6 @@ export class CreateBoletoDto {
       'referenceCode can only contain letters, numbers, dots and hyphens',
   })
   @IsOptional()
-  @IsUnique({
-    context: {
-      entity: Boleto,
-      scope: ['accountId', 'referenceCode'],
-    },
-    message: 'referenceCode already exists for this accountId',
-  })
   referenceCode?: string;
 
   @ApiProperty({
