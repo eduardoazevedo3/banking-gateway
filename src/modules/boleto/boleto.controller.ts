@@ -28,7 +28,10 @@ export class BoletoController {
   @Get(':id/register')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
   async register(@Param() { id }: FindBoletoParamsDto): Promise<Boleto> {
-    const boleto = await this.boletoService.findOneOrFail({ id });
+    const boleto = await this.boletoService.findOne(
+      { id },
+      { findOrFail: true },
+    );
     await this.boletoService.register(boleto);
     return boleto;
   }
@@ -47,10 +50,13 @@ export class BoletoController {
     @Param() { id }: FindBoletoParamsDto,
     @Account() account: AccountEntity,
   ): Promise<Boleto> {
-    return await this.boletoService.findOneOrFail({
-      accountId: account.id,
-      id,
-    });
+    return await this.boletoService.findOne(
+      {
+        accountId: account.id,
+        id,
+      },
+      { findOrFail: true },
+    );
   }
 
   @Post()
@@ -82,10 +88,13 @@ export class BoletoController {
     @Account() account: AccountEntity,
     @Body() boletoDto: UpdateBoletoDto,
   ): Promise<Boleto> {
-    const boleto = await this.boletoService.findOneOrFail({
-      accountId: account.id,
-      id,
-    });
+    const boleto = await this.boletoService.findOne(
+      {
+        accountId: account.id,
+        id,
+      },
+      { findOrFail: true },
+    );
     return await this.boletoService.update(boleto.id, boletoDto);
   }
 }

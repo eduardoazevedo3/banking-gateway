@@ -1,5 +1,5 @@
 import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
 import { DataSource, Equal, FindOptionsRelations } from 'typeorm';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
@@ -8,6 +8,7 @@ import { Boleto } from './entities/boleto.entity';
 
 type BoletoOptions = {
   skipFind?: boolean;
+  findOrFail?: boolean;
 };
 
 @Injectable()
@@ -23,14 +24,20 @@ export class BoletoService {
     return await this.connection.manager.findBy(Boleto<object>, boleto);
   }
 
-  async findOneOrFail(
-    boleto: Partial<Boleto>,
+  async findOne(
+    boleto: Partial<Pick<Boleto, 'id' | 'accountId' | 'referenceCode'>>,
+    options?: BoletoOptions,
     relations: FindOptionsRelations<Boleto> | string[] = [],
   ): Promise<Boleto> {
-    return await this.connection.manager.findOneOrFail(Boleto<object>, {
+    return await this.connection.manager[
+      options?.findOrFail ? 'findOneOrFail' : 'findOne'
+    ](Boleto<object>, {
       where: {
-        ...(boleto.accountId ? { accountId: Equal(boleto.accountId) } : {}),
-        id: Equal(boleto.id),
+        ...(boleto.accountId && { accountId: Equal(boleto.accountId) }),
+        ...(boleto.id && { id: Equal(boleto.id) }),
+        ...(boleto.referenceCode && {
+          referenceCode: Equal(boleto.referenceCode),
+        }),
       },
       relations,
     });
@@ -40,9 +47,20 @@ export class BoletoService {
     boletoDto: CreateBoletoDto,
     options?: BoletoOptions,
   ): Promise<Boleto> {
+    const boletoExisting =
+      boletoDto.referenceCode &&
+      (await this.findOne({
+        accountId: boletoDto.accountId,
+        referenceCode: boletoDto.referenceCode,
+      }));
+
+    if (boletoExisting) {
+      throw new BadRequestException(['Reference code already exists']);
+    }
+
     const boleto = await this.connection.manager.save(Boleto, boletoDto);
     if (options?.skipFind) return boleto;
-    return await this.findOneOrFail({ id: boleto.id });
+    return await this.findOne({ id: boleto.id });
   }
 
   async update(
@@ -52,7 +70,7 @@ export class BoletoService {
   ): Promise<Boleto> {
     await this.connection.manager.save(Boleto, { id, ...boletoDto });
     if (options?.skipFind) return;
-    return await this.findOneOrFail({ id });
+    return await this.findOne({ id });
   }
 
   async register(boleto): Promise<Job> {

@@ -20,9 +20,10 @@ export class BoletoProcessor extends WorkerHost {
         `of type "${job.name}" with data ${JSON.stringify(job.data)}`,
     );
 
-    let boleto = await this.boletoService.findOneOrFail({
-      id: job.data.boletoId,
-    });
+    let boleto = await this.boletoService.findOne(
+      { id: job.data.boletoId },
+      { findOrFail: true },
+    );
 
     if (
       ![BoletoStatusEnum.PENDING, BoletoStatusEnum.FAILED].includes(
@@ -39,8 +40,9 @@ export class BoletoProcessor extends WorkerHost {
       { skipFind: true },
     );
 
-    boleto = await this.boletoService.findOneOrFail(
+    boleto = await this.boletoService.findOne(
       { id: job.data.boletoId },
+      { findOrFail: true },
       { account: true },
     );
 
