@@ -47,20 +47,18 @@ export class BoletoService {
     boletoDto: CreateBoletoDto,
     options?: BoletoOptions,
   ): Promise<Boleto> {
-    const boletoExisting =
-      boletoDto.referenceCode &&
-      (await this.findOne({
-        accountId: boletoDto.accountId,
-        referenceCode: boletoDto.referenceCode,
-      }));
-
-    if (boletoExisting) {
-      throw new BadRequestException(['Reference code already exists']);
+    try {
+      const boleto = await this.connection.manager.save(Boleto, boletoDto);
+      if (options?.skipFind) return boleto;
+      return await this.findOne({ id: boleto.id });
+    } catch (error) {
+      if (
+        error.message.includes('idx_boletos_account_id_covenant_id_our_number')
+      ) {
+        throw new BadRequestException(['Reference code already exists']);
+      }
+      throw error;
     }
-
-    const boleto = await this.connection.manager.save(Boleto, boletoDto);
-    if (options?.skipFind) return boleto;
-    return await this.findOne({ id: boleto.id });
   }
 
   async update(

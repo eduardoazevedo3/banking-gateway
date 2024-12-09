@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateBoletos1723334125127 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`
+    await queryRunner.query(`--sql
 			CREATE TABLE boletos (
 				id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				account_id BIGINT NOT NULL,
