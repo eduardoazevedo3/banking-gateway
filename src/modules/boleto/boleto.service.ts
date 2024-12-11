@@ -74,4 +74,8 @@ export class BoletoService {
   async register(boleto): Promise<Job> {
     return await this.boletoQueue.add('register', { boletoId: boleto.id });
   }
+
+  async conciliation(params: any): Promise<Job> {
+    return await this.boletoQueue.add('conciliation', { params });
+  }
 }
