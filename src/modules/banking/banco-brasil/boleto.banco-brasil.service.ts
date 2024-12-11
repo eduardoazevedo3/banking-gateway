@@ -1,43 +1,16 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
+import { Account } from '../../account/entities/account.entity';
 import { Boleto } from '../../boleto/entities/boleto.entity';
 import { BoletoStatusEnum } from '../../boleto/enums/boleto-status.enum';
 import { IBoletoBanking } from '../interfaces/boleto.banking.interface';
 import { BancoBrasilClient } from './banco-brasil.client';
+import { BoletoResponseBancoBrasilDto } from './dtos/boleto-response.banco-brasil.dto';
+import { FindAllBoletoBancoBrasilDto } from './dtos/find-all-boleto.banco-brasil.dto';
 import { BoletoBancoBrasilException } from './exceptions/boleto.banco-brasil.exception';
 import { CreateBoletoBancoBrasilTransform } from './transformers/create-boleto.banco-brasil.transform';
 import { TIssueDataBoleto } from './types/issue-data-boleto.type';
-
-/**
-{
-  "beneficiario": {
-    "agencia": 452,
-    "contaCorrente": 123873,
-    "tipoEndereco": 1,
-    "logradouro": "ST AUXILIAR DE GARAGENS RUA 9 LOTE 10",
-    "bairro": "TAGUATINGA NORTE",
-    "cidade": "BRASILIA",
-    "codigoCidade": 2000,
-    "uf": "DF",
-    "cep": 72145760,
-    "indicadorComprovacao": "0"
-  },
-  "qrCode": {
-    "url": "",
-    "txId": "",
-    "emv": ""
-  },
-  "numero": "00031285570700000300",
-  "numeroCarteira": 17,
-  "numeroVariacaoCarteira": 35,
-  "codigoCliente": 704950857,
-  "linhaDigitavel": "00190000090312855707500000300178498400000010000",
-  "codigoBarraNumerico": "00194984000000100000000003128557070000030017",
-  "numeroContratoCobranca": 19581316,
-  "observacao": ""
-}
-*/
 
 @Injectable()
 export class BoletoBancoBrasilService implements IBoletoBanking {
@@ -46,7 +19,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     private cacheManager: Cache,
   ) {}
 
-  async register(boleto: Boleto): Promise<Boleto> {
+  async register(account: Account, boleto: Boleto): Promise<Boleto> {
     Logger.log(
       '[BoletoBancoBrasilService] Registering boleto in Banco do Brasil',
     );
@@ -58,7 +31,52 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     const payload = instanceToPlain(boletoDto);
     const bancoBrasilClient = new BancoBrasilClient(
       this.cacheManager,
-      boleto.account.credentials,
+      account.credentials,
+    );
+
+    Logger.log(
+      `[BoletoBancoBrasilService] Payload: ${JSON.stringify(payload)}`,
+    );
+
+    try {
+      const { data: boletoData } =
+        await bancoBrasilClient.request<BoletoResponseBancoBrasilDto>(
+          'POST',
+          '/cobrancas/v2/boletos',
+          payload,
+        );
+
+      Logger.log(
+        `[BoletoBancoBrasilService] Payload: ${JSON.stringify(boletoData)}`,
+      );
+
+      boleto.status = BoletoStatusEnum.OPENED;
+      boleto.registeredAt = new Date();
+      boleto.barcode = boletoData.codigoBarraNumerico;
+      boleto.digitableLine = boletoData.linhaDigitavel;
+      boleto.billingContractNumber = boletoData.numeroContratoCobranca;
+
+      return boleto;
+    } catch (error) {
+      throw new BoletoBancoBrasilException({
+        code: error.code,
+        message: JSON.stringify(error.response?.data || error.message),
+      });
+    }
+  }
+
+  async conciliation(
+    account: Account,
+    params: FindAllBoletoBancoBrasilDto,
+  ): Promise<Boleto[]> {
+    Logger.log(
+      '[BoletoBancoBrasilService] Find all boletos in Banco do Brasil',
+    );
+
+    const payload = instanceToPlain(params);
+    const bancoBrasilClient = new BancoBrasilClient(
+      this.cacheManager,
+      account.credentials,
     );
 
     Logger.log(
@@ -68,7 +86,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     try {
       const { data: responseData } = await bancoBrasilClient.request(
         'POST',
-        '/cobrancas/v2/boletos',
+        `/convenios/${params.agreementNumber}/listar-retorno-movimento`,
         payload,
       );
 
@@ -76,13 +94,13 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
         `[BoletoBancoBrasilService] Payload: ${JSON.stringify(responseData)}`,
       );
 
-      boleto.status = BoletoStatusEnum.OPENED;
-      boleto.registeredAt = new Date();
-      boleto.barcode = responseData.codigoBarraNumerico;
-      boleto.digitableLine = responseData.linhaDigitavel;
-      boleto.billingContractNumber = responseData.numeroContratoCobranca;
+      // boleto.status = BoletoStatusEnum.OPENED;
+      // boleto.registeredAt = new Date();
+      // boleto.barcode = responseData.codigoBarraNumerico;
+      // boleto.digitableLine = responseData.linhaDigitavel;
+      // boleto.billingContractNumber = responseData.numeroContratoCobranca;
 
-      return boleto;
+      return null;
     } catch (error) {
       throw new BoletoBancoBrasilException({
         code: error.code,

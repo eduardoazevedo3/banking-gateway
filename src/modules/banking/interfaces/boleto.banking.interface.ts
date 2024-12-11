@@ -1,5 +1,6 @@
+import { Account } from '../../account/entities/account.entity';
 import { Boleto } from '../../boleto/entities/boleto.entity';
 
 export interface IBoletoBanking {
-  register(boleto: Boleto): Promise<Boleto>;
+  register(account: Account, boleto: Boleto): Promise<Boleto>;
 }

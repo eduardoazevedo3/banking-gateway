@@ -4,7 +4,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { bullQueueDefaultOptions } from '../../config/bull.config';
 import { AccountGuard } from '../../core/guards/account.guard';
-import { AccountService } from '../account/account.service';
+import { AccountModule } from '../account/account.module';
 import { BoletoController } from './boleto.controller';
 import { BoletoService } from './boleto.service';
 
@@ -18,8 +18,9 @@ import { BoletoService } from './boleto.service';
       name: 'boleto',
       adapter: BullMQAdapter,
     }),
+    AccountModule,
   ],
   controllers: [BoletoController],
-  providers: [AccountGuard, AccountService, BoletoService],
+  providers: [AccountGuard, BoletoService],
 })
 export class BoletoModule {}
