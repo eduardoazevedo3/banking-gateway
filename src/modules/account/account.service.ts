@@ -22,8 +22,8 @@ export class AccountService {
       id: Equal(id),
     });
 
-    const credentials = account.credentials;
-    account.credentials = credentials && '[ENCRYPTED]';
+    // const credentials = account.credentials;
+    // account.credentials = credentials && '[ENCRYPTED]';
     return account;
   }
 

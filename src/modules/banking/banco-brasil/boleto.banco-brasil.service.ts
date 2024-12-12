@@ -4,6 +4,7 @@ import { instanceToPlain } from 'class-transformer';
 import { Account } from '../../account/entities/account.entity';
 import { Boleto } from '../../boleto/entities/boleto.entity';
 import { BoletoStatusEnum } from '../../boleto/enums/boleto-status.enum';
+import { BoletoFilterParams } from '../../boleto/processors/boleto.processor';
 import { IBoletoBanking } from '../interfaces/boleto.banking.interface';
 import { BancoBrasilClient } from './banco-brasil.client';
 import { BoletoResponseBancoBrasilDto } from './dtos/boleto-response.banco-brasil.dto';
@@ -67,13 +68,21 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
 
   async conciliation(
     account: Account,
-    params: FindAllBoletoBancoBrasilDto,
+    params: BoletoFilterParams,
   ): Promise<Boleto[]> {
     Logger.log(
       '[BoletoBancoBrasilService] Find all boletos in Banco do Brasil',
     );
 
-    const payload = instanceToPlain(params);
+    const findAllParams = new FindAllBoletoBancoBrasilDto();
+    // findAllParams.startDate = params.startDate;
+    // findAllParams.endDate = params.endDate;
+    findAllParams.startDate = '01.11.2024';
+    findAllParams.endDate = '11.11.2024';
+    findAllParams.page = params.page;
+    findAllParams.perPage = params.perPage;
+
+    const payload = instanceToPlain(findAllParams);
     const bancoBrasilClient = new BancoBrasilClient(
       this.cacheManager,
       account.credentials,

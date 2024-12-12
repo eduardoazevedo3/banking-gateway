@@ -9,14 +9,17 @@ import { BoletoStatusEnum } from '../enums/boleto-status.enum';
 
 type BoletoActions = 'register' | 'conciliate';
 
-type BoletoData = {
+export type BoletoData = {
   boletoId: number;
 };
 
-type BoletoFilterParams = {
+export type BoletoFilterParams = {
   accountId: number;
-  conciliationFileInitialDate: Date;
-  conciliationFileFinalDate: Date;
+  agreementNumber: string;
+  startDate: Date;
+  endDate: Date;
+  page: number;
+  perPage: number;
 };
 
 type BoletoParams = BoletoData & BoletoFilterParams;
@@ -47,11 +50,11 @@ export class BoletoProcessor extends WorkerHost {
 
   @OnWorkerEvent('failed')
   async onFailed(job: Job, error: Error) {
-    await this.boletoService.update(
-      job.data.boletoId,
-      { status: BoletoStatusEnum.FAILED },
-      { skipFind: true },
-    );
+    // await this.boletoService.update(
+    //   job.data.boletoId,
+    //   { status: BoletoStatusEnum.FAILED },
+    //   { skipFind: true },
+    // );
     Logger.error(error.stack);
   }
 
@@ -86,15 +89,26 @@ export class BoletoProcessor extends WorkerHost {
     await this.boletoService.update(boleto.id, boleto);
   }
 
-  private async conciliate(params: BoletoFilterParams): Promise<void> {
-    const account = await this.accountService.findOne(params.accountId);
-    const boletos = await this.boletoBankingService.conciliation(
-      account,
-      params,
-    );
+  private async conciliation(params: BoletoFilterParams): Promise<void> {
+    const account = await this.accountService.findOneOrFail(params.accountId);
+    const perPage = 1_000;
 
-    boletos.forEach(async (boleto) => {
-      await this.boletoService.update(boleto.id, boleto);
-    });
+    let boletos: Boleto[];
+    let page = 1;
+
+    do {
+      boletos = await this.boletoBankingService.conciliation(account, {
+        ...params,
+        page,
+        perPage,
+        agreementNumber: '3128557',
+      });
+
+      // boletos.forEach(async (boleto) => {
+      //   await this.boletoService.update(boleto.id, boleto);
+      // });
+
+      page++;
+    } while (boletos?.length === perPage);
   }
 }

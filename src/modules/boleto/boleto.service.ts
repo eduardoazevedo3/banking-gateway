@@ -2,6 +2,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
 import { DataSource, Equal, FindOptionsRelations } from 'typeorm';
+import { Account } from '../account/entities/account.entity';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { UpdateBoletoDto } from './dtos/update-boleto.dto';
 import { Boleto } from './entities/boleto.entity';
@@ -71,11 +72,13 @@ export class BoletoService {
     return await this.findOne({ id });
   }
 
-  async register(boleto): Promise<Job> {
+  async register(boleto: Boleto): Promise<Job> {
     return await this.boletoQueue.add('register', { boletoId: boleto.id });
   }
 
-  async conciliation(params: any): Promise<Job> {
-    return await this.boletoQueue.add('conciliation', { params });
+  async conciliation(account: Account): Promise<Job> {
+    return await this.boletoQueue.add('conciliation', {
+      accountId: account.id,
+    });
   }
 }
