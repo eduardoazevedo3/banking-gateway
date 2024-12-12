@@ -25,7 +25,7 @@ export class BancoBrasilClient {
     return {
       sandbox: 'https://api.sandbox.bb.com.br',
       production: 'https://api.bb.com.br',
-    }[this.getCurrentEnv];
+    }[this.getApiEnv];
   }
 
   async request<T = unknown>(
@@ -88,10 +88,10 @@ export class BancoBrasilClient {
     return {
       sandbox: 'https://oauth.sandbox.bb.com.br',
       production: 'https://oauth.bb.com.br',
-    }[this.getCurrentEnv];
+    }[this.getApiEnv];
   }
 
-  private get getCurrentEnv(): string {
+  private get getApiEnv(): string {
     return process.env.NODE_ENV === 'production' ? 'production' : 'sandbox';
   }
 
@@ -99,7 +99,7 @@ export class BancoBrasilClient {
     return {
       sandbox: 'gw-dev-app-key',
       production: 'gw-app-key',
-    }[this.getCurrentEnv];
+    }[this.getApiEnv];
   }
 
   private encodedCredentials(): string {
@@ -127,6 +127,6 @@ export class BancoBrasilClient {
         rejectUnauthorized: false,
       }),
       production: undefined,
-    }[this.getCurrentEnv];
+    }[this.getApiEnv];
   }
 }
