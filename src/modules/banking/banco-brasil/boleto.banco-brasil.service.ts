@@ -22,7 +22,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
 
   async register(account: Account, boleto: Boleto): Promise<Boleto> {
     Logger.log(
-      '[BoletoBancoBrasilService] Registering boleto in Banco do Brasil',
+      '[BoletoBancoBrasilService.register] Registering boleto in Banco do Brasil',
     );
 
     const createBoletoTransform = new CreateBoletoBancoBrasilTransform();
@@ -36,7 +36,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     );
 
     Logger.log(
-      `[BoletoBancoBrasilService] Payload: ${JSON.stringify(payload)}`,
+      `[BoletoBancoBrasilService.register] Payload: ${JSON.stringify(payload)}`,
     );
 
     try {
@@ -48,7 +48,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
         );
 
       Logger.log(
-        `[BoletoBancoBrasilService] Payload: ${JSON.stringify(boletoData)}`,
+        `[BoletoBancoBrasilService.register] Response: ${JSON.stringify(boletoData)}`,
       );
 
       boleto.status = BoletoStatusEnum.OPENED;
@@ -71,7 +71,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     params: BoletoFilterParams,
   ): Promise<Boleto[]> {
     Logger.log(
-      '[BoletoBancoBrasilService] Find all boletos in Banco do Brasil',
+      '[BoletoBancoBrasilService.conciliation] Find all boletos in Banco do Brasil',
     );
 
     const findAllParams = new FindAllBoletoBancoBrasilDto();
@@ -89,7 +89,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     );
 
     Logger.log(
-      `[BoletoBancoBrasilService] Payload: ${JSON.stringify(payload)}`,
+      `[BoletoBancoBrasilService.conciliation] Payload: ${JSON.stringify(payload)}`,
     );
 
     try {
@@ -100,7 +100,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
       );
 
       Logger.log(
-        `[BoletoBancoBrasilService] Payload: ${JSON.stringify(responseData)}`,
+        `[BoletoBancoBrasilService.conciliation] Payload: ${JSON.stringify(responseData)}`,
       );
 
       // boleto.status = BoletoStatusEnum.OPENED;
