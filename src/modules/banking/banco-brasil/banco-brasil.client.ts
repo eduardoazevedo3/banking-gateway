@@ -42,13 +42,6 @@ export class BancoBrasilClient {
     });
   }
 
-  private get apiUrl(): string {
-    return {
-      sandbox: 'https://api.sandbox.bb.com.br',
-      production: 'https://api.bb.com.br',
-    }[this.getCurrentEnv];
-  }
-
   private async authenticate(): Promise<AuthApiDto> {
     const response = await this.axiosInstance
       .post<AuthApiDto>(`${this.oauthUrl}/oauth/token`, this.authPayload, {
@@ -78,14 +71,21 @@ export class BancoBrasilClient {
     return accessToken;
   }
 
+  private get apiUrl(): string {
+    return {
+      sandbox: 'https://api.sandbox.bb.com.br',
+      production: 'https://api.bb.com.br',
+    }[this.getApiEnv];
+  }
+
   private get oauthUrl(): string {
     return {
       sandbox: 'https://oauth.sandbox.bb.com.br',
       production: 'https://oauth.bb.com.br',
-    }[this.getCurrentEnv];
+    }[this.getApiEnv];
   }
 
-  private get getCurrentEnv(): string {
+  private get getApiEnv(): string {
     return process.env.NODE_ENV === 'production' ? 'production' : 'sandbox';
   }
 
@@ -93,7 +93,7 @@ export class BancoBrasilClient {
     return {
       sandbox: 'gw-dev-app-key',
       production: 'gw-app-key',
-    }[this.getCurrentEnv];
+    }[this.getApiEnv];
   }
 
   private encodedCredentials(): string {
@@ -121,6 +121,6 @@ export class BancoBrasilClient {
         rejectUnauthorized: false,
       }),
       production: undefined,
-    }[this.getCurrentEnv];
+    }[this.getApiEnv];
   }
 }
