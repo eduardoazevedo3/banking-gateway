@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAccounts1723334124000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`--sql
+    await queryRunner.query(`-- sql
       CREATE TABLE accounts (
         id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
         provider_account_id VARCHAR(64),
@@ -20,7 +20,7 @@ export class CreateAccounts1723334124000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`--sql
+    await queryRunner.query(`-- sql
       DROP TABLE accounts;
     `);
   }

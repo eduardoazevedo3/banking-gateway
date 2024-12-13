@@ -141,7 +141,7 @@ describe('Boletos', () => {
       );
 
       const job = await queue.add(
-        'boleto',
+        'register',
         { boletoId: boleto.id },
         { removeOnComplete: false },
       );
@@ -168,7 +168,7 @@ describe('Boletos', () => {
 
       try {
         const job = await queue.add(
-          'boleto',
+          'register',
           { boletoId: boleto.id },
           { removeOnComplete: false },
         );
