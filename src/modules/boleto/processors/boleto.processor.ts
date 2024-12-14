@@ -7,7 +7,7 @@ import { BoletoService } from '../boleto.service';
 import { Boleto } from '../entities/boleto.entity';
 import { BoletoStatusEnum } from '../enums/boleto-status.enum';
 
-type BoletoActions = 'register' | 'conciliate';
+type BoletoJobName = 'register' | 'conciliation';
 
 export type BoletoData = {
   boletoId: number;
@@ -35,7 +35,7 @@ export class BoletoProcessor extends WorkerHost {
   @Inject()
   private readonly accountService: AccountService;
 
-  async process(job: Job<BoletoParams, Boleto, BoletoActions>): Promise<void> {
+  async process(job: Job<BoletoParams, Boleto, BoletoJobName>): Promise<void> {
     Logger.log(
       `[BoletoProcessor] Processing boleto job "${job.id}" ` +
         `of type "${job.name}" with data ${JSON.stringify(job.data)}`,
@@ -49,12 +49,14 @@ export class BoletoProcessor extends WorkerHost {
   }
 
   @OnWorkerEvent('failed')
-  async onFailed(job: Job, error: Error) {
-    // await this.boletoService.update(
-    //   job.data.boletoId,
-    //   { status: BoletoStatusEnum.FAILED },
-    //   { skipFind: true },
-    // );
+  async onFailed(job: Job<BoletoParams, Boleto, BoletoJobName>, error: Error) {
+    if (job.name === 'register') {
+      await this.boletoService.update(
+        job.data.boletoId,
+        { status: BoletoStatusEnum.FAILED },
+        { skipFind: true },
+      );
+    }
     Logger.error(error.stack);
   }
 
@@ -69,7 +71,9 @@ export class BoletoProcessor extends WorkerHost {
         boleto.status,
       )
     ) {
-      Logger.log(`[BoletoProcessor] Boleto ${boleto.id} is ${boleto.status}`);
+      Logger.log(
+        `[BoletoProcessor.register] Boleto ${boleto.id} is ${boleto.status}`,
+      );
       return;
     }
 
@@ -91,12 +95,15 @@ export class BoletoProcessor extends WorkerHost {
 
   private async conciliation(params: BoletoFilterParams): Promise<void> {
     const account = await this.accountService.findOneOrFail(params.accountId);
-    const perPage = 1_000;
+    const perPage = 500;
 
     let boletos: Boleto[];
+    let boletosCount = 0;
     let page = 1;
 
     do {
+      Logger.log(`[BoletoProcessor.conciliation] Page: ${page}`);
+
       boletos = await this.boletoBankingService.conciliation(account, {
         ...params,
         page,
@@ -109,6 +116,11 @@ export class BoletoProcessor extends WorkerHost {
       // });
 
       page++;
+      boletosCount += boletos?.length || 0;
     } while (boletos?.length === perPage);
+
+    Logger.log(
+      `[BoletoProcessor.conciliation] Total of boletos: ${boletosCount}`,
+    );
   }
 }
