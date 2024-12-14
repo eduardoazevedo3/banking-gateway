@@ -28,7 +28,7 @@ export class BancoBrasilClient {
   async request<T = unknown>(
     method: Method,
     path: string,
-    payload: any,
+    payload: unknown,
   ): Promise<AxiosResponse> {
     const credentialsParsed = JSON.parse(this.credentials);
     const token = await this.getCredentials();

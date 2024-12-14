@@ -71,15 +71,20 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     params: BoletoFilterParams,
   ): Promise<Boleto[]> {
     Logger.log(
-      '[BoletoBancoBrasilService.conciliation] Find all boletos in Banco do Brasil',
+      `[BoletoBancoBrasilService.conciliation] Find all boletos with: ${JSON.stringify(params)}`,
     );
 
     const findAllParams = new FindAllBoletoBancoBrasilDto();
     // findAllParams.startDate = params.startDate;
     // findAllParams.endDate = params.endDate;
     findAllParams.startDate = '01.11.2024';
-    findAllParams.endDate = '11.11.2024';
-    findAllParams.page = params.page;
+    findAllParams.endDate = '01.11.2024';
+    findAllParams.accountNumber = 12345678;
+    findAllParams.agencyPrefixCode = 1;
+    findAllParams.billingWalletNumber = 17;
+    findAllParams.billingWalletVariationNumber = 35;
+    findAllParams.page =
+      params.page === 1 ? params.page : (params.page - 1) * params.perPage + 1;
     findAllParams.perPage = params.perPage;
 
     const payload = instanceToPlain(findAllParams);
@@ -95,12 +100,12 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     try {
       const { data: responseData } = await bancoBrasilClient.request(
         'POST',
-        `/convenios/${params.agreementNumber}/listar-retorno-movimento`,
+        `cobrancas/v2/convenios/${params.agreementNumber}/listar-retorno-movimento`,
         payload,
       );
 
       Logger.log(
-        `[BoletoBancoBrasilService.conciliation] Payload: ${JSON.stringify(responseData)}`,
+        `[BoletoBancoBrasilService.conciliation] Response: ${JSON.stringify(responseData)}`,
       );
 
       // boleto.status = BoletoStatusEnum.OPENED;
@@ -109,7 +114,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
       // boleto.digitableLine = responseData.linhaDigitavel;
       // boleto.billingContractNumber = responseData.numeroContratoCobranca;
 
-      return null;
+      return responseData.listaRegistro;
     } catch (error) {
       throw new BoletoBancoBrasilException({
         code: error.code,
