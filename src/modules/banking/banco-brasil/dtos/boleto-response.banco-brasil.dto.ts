@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 
 class BoletoBeneficiaryBancoBrasilDto {
   @Expose({ name: 'agencia' })
@@ -92,13 +92,14 @@ export class BoletoResponseBancoBrasilDto {
   clientCode: number;
 
   @Expose({ name: 'linhaDigitavel' })
-  readableLine: string;
+  digitableLine: string;
 
   @Expose({ name: 'codigoBarraNumerico' })
-  numericBarCode: string;
+  barcode: string;
 
   @Expose({ name: 'numeroContratoCobranca' })
-  billingContractNumber: number;
+  @Transform(({ value }) => value.toString())
+  billingContractNumber: string;
 
   @Expose({ name: 'observacao' })
   observation: string;

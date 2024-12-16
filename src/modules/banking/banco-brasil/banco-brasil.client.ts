@@ -29,7 +29,7 @@ export class BancoBrasilClient {
     method: Method,
     path: string,
     payload: unknown,
-  ): Promise<AxiosResponse> {
+  ): Promise<AxiosResponse<T>> {
     const credentialsParsed = JSON.parse(this.credentials);
     const token = await this.getCredentials();
 
@@ -58,7 +58,7 @@ export class BancoBrasilClient {
         throw e;
       });
     const authData = plainToClass(AuthApiDto, response.data);
-    const expiresIn = (authData.expiresIn - 15) * 1000;
+    const expiresIn = (authData.expiresIn - 30) * 1000;
     await this.cacheManager.set(this.cacheKey(), authData, expiresIn);
     return authData;
   }

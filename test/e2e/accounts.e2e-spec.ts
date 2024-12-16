@@ -12,7 +12,7 @@ import { AppListenerModule } from '../../src/app.listener.module';
 import { AppModule } from '../../src/app.module';
 import { BadRequestFilter } from '../../src/core/filters/bad-request.filter';
 import { EntityNotFoundFilter } from '../../src/core/filters/entity-not-found.filter';
-import { Account } from '../../src/modules/account/entities/account.entity';
+import { Account } from '../../src/entities/account.entity';
 import { accountMock } from '../mocks/account.mock';
 
 describe('Accounts', () => {
