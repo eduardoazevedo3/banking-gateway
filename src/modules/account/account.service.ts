@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Equal } from 'typeorm';
+import { Account } from '../../entities/account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
-import { Account } from './entities/account.entity';
 
 @Injectable()
 export class AccountService {
@@ -22,8 +22,8 @@ export class AccountService {
       id: Equal(id),
     });
 
-    const credentials = account.credentials;
-    account.credentials = credentials && '[ENCRYPTED]';
+    // const credentials = account.credentials;
+    // account.credentials = credentials && '[ENCRYPTED]';
     return account;
   }
 

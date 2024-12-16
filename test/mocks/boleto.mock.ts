@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Boleto } from '../../src/modules/boleto/entities/boleto.entity';
+import { Boleto } from '../../src/entities/boleto.entity';
 import { BoletoIssuingBankEnum } from '../../src/modules/boleto/enums/boleto-issuing-bank.enum';
 import { BoletoStatusEnum } from '../../src/modules/boleto/enums/boleto-status.enum';
 

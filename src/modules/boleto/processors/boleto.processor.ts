@@ -1,25 +1,20 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
+import * as crypto from 'crypto';
+import { Boleto } from '../../../entities/boleto.entity';
 import { AccountService } from '../../account/account.service';
 import { BoletoBankingService } from '../../banking/boleto.banking.service';
 import { BoletoService } from '../boleto.service';
-import { Boleto } from '../entities/boleto.entity';
 import { BoletoStatusEnum } from '../enums/boleto-status.enum';
+import {
+  BoletoConciliationParams,
+  BoletoGenericParams,
+  BoletoOperationParams,
+} from '../types/boleto-params.type';
 
-type BoletoActions = 'register' | 'conciliate';
-
-type BoletoData = {
-  boletoId: number;
-};
-
-type BoletoFilterParams = {
-  accountId: number;
-  conciliationFileInitialDate: Date;
-  conciliationFileFinalDate: Date;
-};
-
-type BoletoParams = BoletoData & BoletoFilterParams;
+type BoletoJobName = 'register' | 'conciliation';
 
 @Processor('boleto')
 export class BoletoProcessor extends WorkerHost {
@@ -32,30 +27,41 @@ export class BoletoProcessor extends WorkerHost {
   @Inject()
   private readonly accountService: AccountService;
 
-  async process(job: Job<BoletoParams, Boleto, BoletoActions>): Promise<void> {
+  @Inject(CACHE_MANAGER)
+  private cacheManager: Cache;
+
+  async process(
+    job: Job<BoletoGenericParams, Boleto, BoletoJobName>,
+  ): Promise<void> {
     Logger.log(
-      `[BoletoProcessor] Processing boleto job "${job.id}" ` +
+      `Processing boleto job "${job.id}" ` +
         `of type "${job.name}" with data ${JSON.stringify(job.data)}`,
+      'BoletoProcessor.process',
     );
     await this[job.name](job.data);
   }
 
   @OnWorkerEvent('completed')
   onCompleted() {
-    Logger.log('[BoletoProcessor] Job completed');
+    Logger.log('Job completed', 'BoletoProcessor.onCompleted');
   }
 
   @OnWorkerEvent('failed')
-  async onFailed(job: Job, error: Error) {
-    await this.boletoService.update(
-      job.data.boletoId,
-      { status: BoletoStatusEnum.FAILED },
-      { skipFind: true },
-    );
-    Logger.error(error.stack);
+  async onFailed(
+    job: Job<BoletoGenericParams, Boleto, BoletoJobName>,
+    error: Error,
+  ) {
+    if (job.name === 'register') {
+      await this.boletoService.update(
+        job.data.boletoId,
+        { status: BoletoStatusEnum.FAILED },
+        { skipFind: true },
+      );
+    }
+    Logger.error(error.stack, 'BoletoProcessor.onFailed');
   }
 
-  private async register({ boletoId }: BoletoData): Promise<Boleto> {
+  private async register({ boletoId }: BoletoOperationParams): Promise<Boleto> {
     let boleto = await this.boletoService.findOne(
       { id: boletoId },
       { findOrFail: true },
@@ -66,7 +72,10 @@ export class BoletoProcessor extends WorkerHost {
         boleto.status,
       )
     ) {
-      Logger.log(`[BoletoProcessor] Boleto ${boleto.id} is ${boleto.status}`);
+      Logger.log(
+        `Boleto ${boleto.id} is ${boleto.status}`,
+        'BoletoProcessor.register',
+      );
       return;
     }
 
@@ -86,15 +95,49 @@ export class BoletoProcessor extends WorkerHost {
     await this.boletoService.update(boleto.id, boleto);
   }
 
-  private async conciliate(params: BoletoFilterParams): Promise<void> {
-    const account = await this.accountService.findOne(params.accountId);
-    const boletos = await this.boletoBankingService.conciliation(
-      account,
-      params,
-    );
+  private async conciliation(params: BoletoConciliationParams): Promise<void> {
+    const account = await this.accountService.findOneOrFail(params.accountId);
+    const perPage = 500;
 
-    boletos.forEach(async (boleto) => {
-      await this.boletoService.update(boleto.id, boleto);
-    });
+    const boletoParams = {
+      ...params,
+      perPage,
+    };
+
+    const cacheKey = this.cacheKey(JSON.stringify(boletoParams));
+
+    let boletos: Boleto[];
+    let boletosCount = 0;
+    let page = (await this.cacheManager.get<number>(cacheKey)) || 1;
+
+    do {
+      Logger.log(`Page: ${page}`, 'BoletoProcessor.conciliation');
+
+      await this.cacheManager.set(cacheKey, page, 1000 * 120);
+
+      boletos = await this.boletoBankingService.conciliation(account, {
+        ...boletoParams,
+        page,
+      });
+
+      boletos.forEach(async (boleto) => {
+        if (boleto.status) Logger.log(JSON.stringify(boleto), 'boleto');
+        // await this.boletoService.update(boleto.id, boleto);
+      });
+
+      page++;
+      boletosCount += boletos?.length || 0;
+    } while (boletos?.length === perPage);
+
+    await this.cacheManager.del(cacheKey);
+
+    Logger.log(
+      `Total of boletos: ${boletosCount}`,
+      'BoletoProcessor.conciliation',
+    );
+  }
+
+  private cacheKey(data: string): string {
+    return crypto.createHash('sha256').update(data).digest('hex');
   }
 }
