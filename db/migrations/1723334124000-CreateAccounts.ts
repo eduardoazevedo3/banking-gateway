@@ -5,7 +5,7 @@ export class CreateAccounts1723334124000 implements MigrationInterface {
     await queryRunner.query(`-- sql
       CREATE TABLE accounts (
         id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        provider_account_id VARCHAR(64),
+        provider_account_id VARCHAR(64) NOT NULL,
         reference_code VARCHAR(64),
         description VARCHAR(255) NOT NULL,
         document_type VARCHAR(10) NOT NULL,

@@ -1,4 +1,4 @@
-import { Boleto } from '../../../boleto/entities/boleto.entity';
+import { Boleto } from '../../../../entities/boleto.entity';
 import { BeneficiaryBoletoBancoBrasilDto } from '../dtos/beneficiary-boleto.banco-brasil.dto';
 import { CreateBoletoBancoBrasilDto } from '../dtos/create-boleto.banco-brasil.dto';
 import { DiscountBoletoBancoBrasilDto } from '../dtos/discount-boleto.banco-brasil.dto';

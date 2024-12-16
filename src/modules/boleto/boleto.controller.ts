@@ -12,13 +12,13 @@ import { ApiHeaders, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Account } from '../../core/decorators/account.decorator';
 import { RecordValidationErrorDto } from '../../core/dtos/record-validation-error.dto';
 import { AccountGuard } from '../../core/guards/account.guard';
+import { Account as AccountEntity } from '../../entities/account.entity';
+import { Boleto } from '../../entities/boleto.entity';
 import { AccountService } from '../account/account.service';
-import { Account as AccountEntity } from '../account/entities/account.entity';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { FindBoletoParamsDto } from './dtos/find-boleto-params.dto';
 import { UpdateBoletoDto } from './dtos/update-boleto.dto';
-import { Boleto } from './entities/boleto.entity';
 
 @ApiTags('Boletos')
 @Controller('boletos')
