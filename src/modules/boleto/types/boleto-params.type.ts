@@ -7,6 +7,10 @@ export type BoletoConciliationParams = {
   agreementNumber: string;
   startDate: Date;
   endDate: Date;
+  accountNumber: number;
+  agencyPrefixCode: number;
+  billingWalletNumber: number;
+  billingWalletVariationNumber: number;
 };
 
 export type BoletoPageParams = {

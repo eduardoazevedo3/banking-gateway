@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
+import { formatDate } from 'date-fns';
 
 export class FindAllBoletoBancoBrasilDto {
   @ApiProperty({
@@ -7,14 +8,16 @@ export class FindAllBoletoBancoBrasilDto {
     example: '01.03.2022',
   })
   @Expose({ name: 'dataMovimentoRetornoInicial' })
-  startDate: string; // FIXME: Change to Date type
+  @Transform(({ value }) => value && formatDate(value, 'dd.MM.yyyy'))
+  startDate: Date;
 
   @ApiProperty({
     description: 'End date to filter the boletos',
     example: '01.03.2022',
   })
+  @Transform(({ value }) => value && formatDate(value, 'dd.MM.yyyy'))
   @Expose({ name: 'dataMovimentoRetornoFinal' })
-  endDate: string; // FIXME: Change to Date type
+  endDate: Date;
 
   @ApiPropertyOptional({
     description: 'Bank agency prefix code',

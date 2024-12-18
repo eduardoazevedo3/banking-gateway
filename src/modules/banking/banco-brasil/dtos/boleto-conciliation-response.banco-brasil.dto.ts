@@ -126,7 +126,7 @@ export class BoletoConciliationDto {
 
   /**
    * @description original name is valorTarifa
-   * @example 9.05
+   * @example 1.9
    */
   @Expose({ name: 'valorTarifa' })
   feeAmount: number;

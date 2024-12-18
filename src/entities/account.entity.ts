@@ -45,6 +45,10 @@ export class Account {
   @Column('text')
   credentials: string;
 
+  @ApiProperty({ example: { key: 'value' } })
+  @Column('json', { name: 'issue_data' })
+  issueData: object;
+
   @CreateDateColumn({ type: 'datetime', name: 'created_at', precision: 3 })
   createdAt: Date;
 
