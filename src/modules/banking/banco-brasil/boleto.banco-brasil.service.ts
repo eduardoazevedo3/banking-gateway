@@ -1,7 +1,6 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { formatDate } from 'date-fns';
 import { Account } from '../../../entities/account.entity';
 import { Boleto } from '../../../entities/boleto.entity';
 import { BoletoStatusEnum } from '../../boleto/enums/boleto-status.enum';
@@ -28,7 +27,8 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
 
   async register(account: Account, boleto: Boleto): Promise<Boleto> {
     Logger.log(
-      '[BoletoBancoBrasilService.register] Registering boleto in Banco do Brasil',
+      'Registering boleto in Banco do Brasil',
+      'BoletoBancoBrasilService.register',
     );
 
     const createBoletoTransform = new CreateBoletoBancoBrasilTransform();
@@ -42,7 +42,8 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     );
 
     Logger.log(
-      `[BoletoBancoBrasilService.register] Payload: ${JSON.stringify(payload)}`,
+      `Payload: ${JSON.stringify(payload)}`,
+      'BoletoBancoBrasilService.register',
     );
 
     try {
@@ -54,7 +55,8 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
         );
 
       Logger.log(
-        `[BoletoBancoBrasilService.register] Response: ${JSON.stringify(boletoData)}`,
+        `Response: ${JSON.stringify(boletoData)}`,
+        'BoletoBancoBrasilService.register',
       );
 
       boleto.status = BoletoStatusEnum.OPENED;
@@ -81,16 +83,19 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
       'BoletoBancoBrasilService.conciliation',
     );
 
-    const findAllParams = new FindAllBoletoBancoBrasilDto();
-    findAllParams.startDate = formatDate(params.startDate, 'dd.MM.yyyy');
-    findAllParams.endDate = formatDate(params.startDate, 'dd.MM.yyyy');
-    findAllParams.accountNumber = 12345678;
-    findAllParams.agencyPrefixCode = 1;
-    findAllParams.billingWalletNumber = 17;
-    findAllParams.billingWalletVariationNumber = 35;
-    findAllParams.page =
-      params.page === 1 ? params.page : (params.page - 1) * params.perPage + 1;
-    findAllParams.perPage = params.perPage;
+    const findAllParams = Object.assign(new FindAllBoletoBancoBrasilDto(), {
+      startDate: params.startDate,
+      endDate: params.startDate,
+      accountNumber: params.accountNumber,
+      agencyPrefixCode: params.agencyPrefixCode,
+      billingWalletNumber: params.billingWalletNumber,
+      billingWalletVariationNumber: params.billingWalletNumber,
+      page:
+        params.page === 1
+          ? params.page
+          : (params.page - 1) * params.perPage + 1,
+      perPage: params.perPage,
+    });
 
     const payload = instanceToPlain(findAllParams);
     const bancoBrasilClient = new BancoBrasilClient(

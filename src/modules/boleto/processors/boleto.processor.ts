@@ -105,6 +105,7 @@ export class BoletoProcessor extends WorkerHost {
     };
 
     const cacheKey = this.cacheKey(JSON.stringify(boletoParams));
+    const ttl = 1_000 * 120; // 2 minutes
 
     let boletos: Boleto[];
     let boletosCount = 0;
@@ -113,15 +114,14 @@ export class BoletoProcessor extends WorkerHost {
     do {
       Logger.log(`Page: ${page}`, 'BoletoProcessor.conciliation');
 
-      await this.cacheManager.set(cacheKey, page, 1000 * 120);
+      await this.cacheManager.set(cacheKey, page, ttl);
 
       boletos = await this.boletoBankingService.conciliation(account, {
         ...boletoParams,
         page,
       });
 
-      boletos.forEach(async (boleto) => {
-        if (boleto.status) Logger.log(JSON.stringify(boleto), 'boleto');
+      boletos.forEach(async (_boleto) => {
         // await this.boletoService.update(boleto.id, boleto);
       });
 

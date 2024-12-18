@@ -83,6 +83,10 @@ export class BoletoService {
       agreementNumber: account.providerAccountId,
       startDate: new Date('2024-11-01 00:00:00 -03:00'),
       endDate: new Date('2024-11-01 00:00:00 -03:00'),
+      accountNumber: 12345678,
+      agencyPrefixCode: 1,
+      billingWalletNumber: 17,
+      billingWalletVariationNumber: 35,
     });
   }
 }
