@@ -1,7 +1,7 @@
 import { Expose, Transform, Type } from 'class-transformer';
 import { CommandActionCodeBancoBrasilEnum } from '../enums/command-action-code.banco-brasil.enum';
 
-export class BoletoConciliationDto {
+export class BoletoConciliationBancoBrasilDto {
   /**
    * @description original name is dataMovimentoRetorno
    * @example 2024-11-01T00:00:00.000Z
@@ -311,6 +311,6 @@ export class BoletoConciliationResponseDto {
    * @description original name is listaRegistro
    */
   @Expose({ name: 'listaRegistro' })
-  @Type(() => BoletoConciliationDto)
-  boletos: BoletoConciliationDto[];
+  @Type(() => BoletoConciliationBancoBrasilDto)
+  boletos: BoletoConciliationBancoBrasilDto[];
 }

@@ -5,7 +5,7 @@ import { plainToClass } from 'class-transformer';
 import * as crypto from 'crypto';
 import * as https from 'https';
 import { AuthBadRequestException } from '../exceptions/auth-bad-request.exception';
-import { AuthApiDto } from './dtos/auth-api.dto';
+import { AuthApiBancoBrasilDto } from './dtos/auth-api.banco-brasil.dto';
 
 @Injectable()
 export class BancoBrasilClient {
@@ -42,30 +42,34 @@ export class BancoBrasilClient {
     });
   }
 
-  private async authenticate(): Promise<AuthApiDto> {
+  private async authenticate(): Promise<AuthApiBancoBrasilDto> {
     const response = await this.axiosInstance
-      .post<AuthApiDto>(`${this.oauthUrl}/oauth/token`, this.authPayload, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${this.encodedCredentials()}`,
+      .post<AuthApiBancoBrasilDto>(
+        `${this.oauthUrl}/oauth/token`,
+        this.authPayload,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${this.encodedCredentials()}`,
+          },
+          httpsAgent: this.getHttpAgent(),
         },
-        httpsAgent: this.getHttpAgent(),
-      })
+      )
       .catch((e) => {
         if (e.code === 'ERR_BAD_REQUEST') {
           throw new AuthBadRequestException(e.response.data);
         }
         throw e;
       });
-    const authData = plainToClass(AuthApiDto, response.data);
+    const authData = plainToClass(AuthApiBancoBrasilDto, response.data);
     const expiresIn = (authData.expiresIn - 30) * 1000;
     await this.cacheManager.set(this.cacheKey(), authData, expiresIn);
     return authData;
   }
 
-  private async getCredentials(): Promise<AuthApiDto> {
+  private async getCredentials(): Promise<AuthApiBancoBrasilDto> {
     const accessToken =
-      (await this.cacheManager.get<AuthApiDto>(this.cacheKey())) ||
+      (await this.cacheManager.get<AuthApiBancoBrasilDto>(this.cacheKey())) ||
       (await this.authenticate());
 
     return accessToken;
