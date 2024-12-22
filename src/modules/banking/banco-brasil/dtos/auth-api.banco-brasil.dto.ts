@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class AuthApiDto {
+export class AuthApiBancoBrasilDto {
   @Expose({ name: 'access_token' })
   accessToken: string;
 

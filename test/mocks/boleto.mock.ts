@@ -36,6 +36,9 @@ export function boletoMock(boleto?: Partial<Boleto>): Boleto {
     payerPhone: '(11) 91234-0192',
     createdAt: new Date(),
     updatedAt: new Date(),
+    paymentDate: new Date(),
+    creditDate: new Date(),
+    dischargeDate: new Date(),
     ...(boleto || {}),
   };
 }

@@ -11,6 +11,7 @@ export function accountMock(account?: Partial<Account>): Account {
     documentType: DocumentTypeEnum.CNPJ,
     documentNumber: '90.890.230/0001-66',
     credentials: '123456',
+    issueData: {},
     createdAt: new Date(),
     updatedAt: new Date(),
     ...(account || {}),

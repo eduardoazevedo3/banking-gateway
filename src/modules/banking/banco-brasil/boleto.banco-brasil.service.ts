@@ -16,7 +16,7 @@ import { FindAllBoletoBancoBrasilDto } from './dtos/find-all-boleto.banco-brasil
 import { CommandActionCodeBancoBrasilEnum } from './enums/command-action-code.banco-brasil.enum';
 import { BoletoBancoBrasilException } from './exceptions/boleto.banco-brasil.exception';
 import { CreateBoletoBancoBrasilTransform } from './transformers/create-boleto.banco-brasil.transform';
-import { TIssueDataBoleto } from './types/issue-data-boleto.type';
+import { TIssueDataBoletoBancoBrasil } from './types/issue-data-boleto.banco-brasil.type';
 
 @Injectable()
 export class BoletoBancoBrasilService implements IBoletoBanking {
@@ -33,7 +33,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
 
     const createBoletoTransform = new CreateBoletoBancoBrasilTransform();
     const boletoDto = createBoletoTransform.transform(
-      boleto as Boleto<TIssueDataBoleto>,
+      boleto as Boleto<TIssueDataBoletoBancoBrasil>,
     );
     const payload = instanceToPlain(boletoDto);
     const bancoBrasilClient = new BancoBrasilClient(
@@ -123,7 +123,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
 
       return responseData.boletos.map<Boleto>(
         ({ commandActionCode: command, ...boletoData }) => {
-          const boleto = new Boleto<TIssueDataBoleto>({
+          const boleto = new Boleto<TIssueDataBoletoBancoBrasil>({
             accountId: account.id,
             covenantId: boletoData.agreementNumber,
             ourNumber: boletoData.ourNumber,
