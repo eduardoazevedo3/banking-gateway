@@ -85,7 +85,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
 
     const findAllParams = Object.assign(new FindAllBoletoBancoBrasilDto(), {
       startDate: params.startDate,
-      endDate: params.startDate,
+      endDate: params.endDate,
       accountNumber: params.accountNumber,
       agencyPrefixCode: params.agencyPrefixCode,
       billingWalletNumber: params.billingWalletNumber,

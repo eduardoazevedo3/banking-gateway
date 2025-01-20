@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsOptional,
@@ -8,6 +9,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { DocumentTypeEnum } from '../../../core/enums/document-type.enum';
+import { IssueDataBoletoBancoBrasilDto } from '../../banking/banco-brasil/dtos/issue-data-boleto.banco-brasil.dto';
 
 export class CreateAccountDto {
   @ApiProperty({
@@ -68,4 +70,8 @@ export class CreateAccountDto {
   @IsString()
   @IsOptional()
   credentials?: string;
+
+  @ApiProperty({ type: IssueDataBoletoBancoBrasilDto })
+  @Type(() => IssueDataBoletoBancoBrasilDto)
+  issueData: IssueDataBoletoBancoBrasilDto;
 }

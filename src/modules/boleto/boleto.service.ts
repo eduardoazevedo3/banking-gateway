@@ -27,7 +27,9 @@ export class BoletoService {
   }
 
   async findOne(
-    boleto: Partial<Pick<Boleto, 'id' | 'accountId' | 'referenceCode'>>,
+    boleto: Partial<
+      Pick<Boleto, 'id' | 'accountId' | 'referenceCode' | 'ourNumber'>
+    >,
     options?: BoletoOptions,
     relations: FindOptionsRelations<Boleto> | string[] = [],
   ): Promise<Boleto> {
@@ -39,6 +41,9 @@ export class BoletoService {
         ...(boleto.id && { id: Equal(boleto.id) }),
         ...(boleto.referenceCode && {
           referenceCode: Equal(boleto.referenceCode),
+        }),
+        ...(boleto.ourNumber && {
+          ourNumber: Equal(boleto.ourNumber),
         }),
       },
       relations,
