@@ -122,7 +122,13 @@ export class BoletoProcessor extends WorkerHost {
       });
 
       boletos.forEach(async (_boleto) => {
-        // await this.boletoService.update(boleto.id, boleto);
+        // const boleto = await this.boletoService.findOne({
+        //   accountId: _boleto.accountId,
+        //   ourNumber: _boleto.ourNumber,
+        // });
+        // if (boleto) {
+        // await this.boletoService.update(boleto.id, boleto, { skipFind: true });
+        // }
       });
 
       page++;

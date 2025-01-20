@@ -17,7 +17,7 @@ export enum CommandActionCodeBancoBrasilEnum {
   /** @description Liquidação por Saldo */
   BALANCE_SETTLEMENT = '08',
 
-  /** @description Baixa de Titulo */
+  /** @description Baixa por não pagamento */
   WRITE_OFF = '09',
 
   /** @description Baixa Solicitada */
