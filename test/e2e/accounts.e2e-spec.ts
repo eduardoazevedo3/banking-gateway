@@ -64,6 +64,7 @@ describe('Accounts', () => {
 
     it('POST v1/accounts', () => {
       const accountPayload = accountMock();
+      accountPayload.credentials = JSON.parse(accountPayload.credentials);
 
       return request(app.getHttpServer())
         .post(`/v1/accounts`)
@@ -74,6 +75,7 @@ describe('Accounts', () => {
 
     it('POST v1/accounts with invalid payload', () => {
       const accountPayload = accountMock({ description: null });
+      accountPayload.credentials = JSON.parse(accountPayload.credentials);
 
       return request(app.getHttpServer())
         .post(`/v1/accounts`)
@@ -84,6 +86,7 @@ describe('Accounts', () => {
 
     it('PATCH v1/accounts/:id', () => {
       const accountPayload = { ...account, description: 'Test' };
+      accountPayload.credentials = JSON.parse(accountPayload.credentials);
 
       return request(app.getHttpServer())
         .patch(`/v1/accounts/${account.id}`)

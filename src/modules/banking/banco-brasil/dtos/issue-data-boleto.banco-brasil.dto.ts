@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
 import { DiscountTypeBoletoBancoBrasilEnum } from '../enums/discount-type-boleto.banco-brasil.enum';
 import { FineTypeBoletoBancoBrasilEnum } from '../enums/fine-type-boleto.banco-brasil.enum';
 import { InterestTypeBoletoBancoBrasilEnum } from '../enums/interest-type-boleto.banco-brasil.enum';
@@ -78,6 +85,7 @@ export class IssueDataBoletoBancoBrasilDto {
     description: 'Billing wallet variation number',
     example: 35,
   })
+  @IsString()
   walletVariationNumber: string;
 
   @ApiProperty({
@@ -90,13 +98,19 @@ export class IssueDataBoletoBancoBrasilDto {
 
   @ApiPropertyOptional({ type: DiscountBoletoBancoBrasilDto })
   @Type(() => DiscountBoletoBancoBrasilDto)
+  @IsOptional()
+  @ValidateNested()
   discount?: DiscountBoletoBancoBrasilDto;
 
   @ApiPropertyOptional({ type: InterestBoletoBancoBrasilDto })
   @Type(() => InterestBoletoBancoBrasilDto)
+  @IsOptional()
+  @ValidateNested()
   interest?: InterestBoletoBancoBrasilDto;
 
   @ApiPropertyOptional({ type: FineBoletoBancoBrasilDto })
   @Type(() => FineBoletoBancoBrasilDto)
+  @IsOptional()
+  @ValidateNested()
   fine?: FineBoletoBancoBrasilDto;
 }

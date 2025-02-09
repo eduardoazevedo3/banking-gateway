@@ -4,18 +4,30 @@ POST http://localhost:3000/v1/accounts HTTP/1.1
 content-type: application/json
 
 {
+  "providerAccountId": "Ab-123-456-012",
   "description": "Sacador Cobrancas S.A",
   "documentType": "CPF",
   "documentNumber": "123.456.789-09",
-  "credentials": "{\"appKey\":\"A001\",\"clientId\":\"1234\",\"clientSecret\":\"abc1234\"}"
+  "credentials": {
+    "appKey": "A001",
+    "clientId": "1234",
+    "clientSecret": "abc1234"
+  },
+  "issueData": {
+    "agreementNumber": "123456",
+    "walletNumber": "12",
+    "walletVariationNumber": "123456",
+    "modalityCode": "01"
+  }
 }
 
 ### Update Account
 
-PATCH http://localhost:3000/v1/accounts/1 HTTP/1.1
+PATCH http://localhost:3000/v1/accounts/8753897994723005 HTTP/1.1
 content-type: application/json
 
 {
+  "providerAccountId": "Ab-123-456-012",
   "description": "Sacador Cobrancas S.A",
   "documentType": "CPF",
   "documentNumber": "123.456.789-09"
