@@ -66,15 +66,15 @@ export class Boleto<T = object> extends BaseEntity<Boleto> {
   dueDate: Date;
 
   @ApiProperty({ example: '2024-08-10' })
-  @Column('date', { name: 'payment_date' })
+  @Column('date', { name: 'payment_date', nullable: true })
   paymentDate: Date;
 
   @ApiPropertyOptional({ example: '2024-08-10' })
-  @Column('date', { name: 'credit_date' })
+  @Column('date', { name: 'credit_date', nullable: true })
   creditDate: Date;
 
   @ApiPropertyOptional({ example: '2024-08-10' })
-  @Column('date', { name: 'discharge_date' })
+  @Column('date', { name: 'discharge_date', nullable: true })
   dischargeDate: Date;
 
   @ApiPropertyOptional({ example: 100.0 })

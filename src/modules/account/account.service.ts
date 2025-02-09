@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource, Equal } from 'typeorm';
 import { Account } from '../../entities/account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
@@ -39,22 +39,37 @@ export class AccountService {
   }
 
   async create(accountDto: CreateAccountDto): Promise<Account> {
+    const { credentials } = accountDto;
     const account = await this.connection.manager.save(Account, {
       ...accountDto,
+      credentials: credentials && JSON.stringify(credentials),
     });
+    const createdAccount = await this.findOneOrFail(account.id);
 
-    return await this.findOneOrFail(account.id);
+    return {
+      ...createdAccount,
+      credentials: JSON.parse(createdAccount.credentials),
+    };
   }
 
   async update(id: number, accountDto: UpdateAccountDto): Promise<Account> {
     const account = await this.findOneOrFail(id);
+    const { credentials } = accountDto;
 
-    await this.connection.manager.save(Account, {
-      ...account,
-      ...accountDto,
-    });
+    try {
+      await this.connection.manager.save(Account, {
+        ...account,
+        ...accountDto,
+        credentials: credentials && JSON.stringify(credentials),
+      });
 
-    return await this.findOneOrFail(id);
+      return await this.findOneOrFail(id);
+    } catch (error) {
+      if (error.message.includes('idx_accounts_provider_account_id')) {
+        throw new BadRequestException(['providerAccountId already exists']);
+      }
+      throw error;
+    }
   }
 
   async remove(id: number): Promise<void> {
