@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { DocumentTypeEnum } from '../../src/core/enums/document-type.enum';
-import { Account } from '../../src/modules/account/entities/account.entity';
+import { Account } from '../../src/entities/account.entity';
 
 export function accountMock(account?: Partial<Account>): Account {
   return {
@@ -10,7 +10,19 @@ export function accountMock(account?: Partial<Account>): Account {
     description: 'Banking Gateway LTDA',
     documentType: DocumentTypeEnum.CNPJ,
     documentNumber: '90.890.230/0001-66',
-    credentials: '123456',
+    credentials: JSON.stringify({
+      appKey: faker.string.numeric(15),
+      clientId: faker.string.numeric(15),
+      clientSecret: faker.string.numeric(15),
+    }),
+    issueData: {
+      agreementNumber: faker.string.numeric(6),
+      accountNumber: faker.string.numeric(8),
+      agencyPrefixCode: faker.string.numeric(1),
+      walletNumber: faker.string.numeric(2),
+      walletVariationNumber: faker.string.numeric(2),
+      modalityCode: '01',
+    },
     createdAt: new Date(),
     updatedAt: new Date(),
     ...(account || {}),

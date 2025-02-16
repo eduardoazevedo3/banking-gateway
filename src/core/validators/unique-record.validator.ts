@@ -17,7 +17,7 @@ export class UniqueRecordValidator implements ValidatorConstraintInterface {
     private readonly connection: DataSource,
   ) {}
 
-  async validate(value: any, args: ValidationArguments): Promise<boolean> {
+  async validate(value: unknown, args: ValidationArguments): Promise<boolean> {
     const where = {};
     const [context] = args.constraints;
     if (!value) return false;

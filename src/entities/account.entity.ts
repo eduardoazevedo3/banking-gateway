@@ -8,8 +8,8 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { DocumentTypeEnum } from '../../../core/enums/document-type.enum';
-import { Boleto } from '../../boleto/entities/boleto.entity';
+import { DocumentTypeEnum } from '../core/enums/document-type.enum';
+import { Boleto } from './boleto.entity';
 
 @Entity('accounts')
 export class Account {
@@ -17,9 +17,9 @@ export class Account {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiPropertyOptional({ example: 'Ab.12345-6789' })
+  @ApiProperty({ example: 'Ab.12345-6789' })
   @Column('varchar', { name: 'provider_account_id' })
-  providerAccountId?: string;
+  providerAccountId: string;
 
   @ApiPropertyOptional({ example: 'Ab.12345-6789' })
   @Column('varchar', { name: 'reference_code' })
@@ -44,6 +44,10 @@ export class Account {
   @ApiProperty({ example: '[ENCRYPTED]' })
   @Column('text')
   credentials: string;
+
+  @ApiProperty({ example: { key: 'value' } })
+  @Column('json', { name: 'issue_data' })
+  issueData: object;
 
   @CreateDateColumn({ type: 'datetime', name: 'created_at', precision: 3 })
   createdAt: Date;

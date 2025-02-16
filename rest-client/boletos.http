@@ -5,7 +5,6 @@ content-type: application/json
 account-id: 1
 
 {
-  "accountId": 1,
   "covenantId": "001-123456-10",
   "ourNumber": "1234591",
   "referenceCode": "123567",
@@ -18,10 +17,10 @@ account-id: 1
   },
   "issueDate": "2024-08-09",
   "dueDate": "2024-09-20",
-  "amount": "100.00",
-  "discountAmount": "0",
-  "fineAmount": "0",
-  "interestAmount": "0",
+  "amount": 100,
+  "discountAmount": 0,
+  "fineAmount": 0,
+  "interestAmount": 0,
   "boletoTypeCode": 1,
   "boletoTypeDescription": "Duplicata Mercantil",
   "beneficiaryType": "CNPJ",

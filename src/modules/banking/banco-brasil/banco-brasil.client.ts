@@ -1,92 +1,90 @@
-import { HttpService } from '@nestjs/axios';
 import { Cache } from '@nestjs/cache-manager';
 import { Injectable } from '@nestjs/common';
-import { AxiosResponse, Method } from 'axios';
+import axios, { AxiosInstance, AxiosResponse, Method } from 'axios';
 import { plainToClass } from 'class-transformer';
 import * as crypto from 'crypto';
 import * as https from 'https';
-import { catchError, firstValueFrom } from 'rxjs';
 import { AuthBadRequestException } from '../exceptions/auth-bad-request.exception';
-import { AuthApiDto } from './dtos/auth-api.dto';
+import { AuthApiBancoBrasilDto } from './dtos/auth-api.banco-brasil.dto';
 
 @Injectable()
 export class BancoBrasilClient {
-  private readonly httpService: HttpService;
+  private readonly axiosInstance: AxiosInstance;
+
   private credentials: string;
   private cacheManager: Cache;
 
   constructor(cacheManager: Cache, credentials: string) {
-    this.httpService = new HttpService();
+    this.axiosInstance = axios.create({
+      baseURL: this.apiUrl,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     this.credentials = credentials;
     this.cacheManager = cacheManager;
-  }
-
-  protected get apiUrl(): string {
-    return {
-      sandbox: 'https://api.sandbox.bb.com.br',
-      production: 'https://api.bb.com.br',
-    }[this.getApiEnv];
   }
 
   async request<T = unknown>(
     method: Method,
     path: string,
-    payload: any,
-  ): Promise<AxiosResponse> {
+    payload: unknown,
+  ): Promise<AxiosResponse<T>> {
     const credentialsParsed = JSON.parse(this.credentials);
     const token = await this.getCredentials();
-    const response = await firstValueFrom(
-      this.httpService.request<T>({
-        method: method,
-        url: `${this.apiUrl}${path}?${this.appKeyName}=${credentialsParsed.appKey}`,
-        data: payload,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token.tokenType} ${token.accessToken}`,
-        },
-        httpsAgent: this.getHttpAgent(),
-      }),
-    );
 
-    return response;
+    return await this.axiosInstance.request<T>({
+      method,
+      url: `${path}?${this.appKeyName}=${credentialsParsed.appKey}`,
+      data: payload,
+      headers: { Authorization: `${token.tokenType} ${token.accessToken}` },
+      httpsAgent: this.getHttpAgent(),
+    });
   }
 
-  private async authenticate(): Promise<AuthApiDto> {
-    const response = await firstValueFrom(
-      this.httpService
-        .post<AuthApiDto>(`${this.oauthUrl}/oauth/token`, this.authPayload, {
+  private async authenticate(): Promise<AuthApiBancoBrasilDto> {
+    const response = await this.axiosInstance
+      .post<AuthApiBancoBrasilDto>(
+        `${this.oauthUrl}/oauth/token`,
+        this.authPayload,
+        {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${this.encodedCredentials()}`,
           },
           httpsAgent: this.getHttpAgent(),
-        })
-        .pipe(
-          catchError((e) => {
-            if (e.code === 'ERR_BAD_REQUEST') {
-              throw new AuthBadRequestException(e.response.data);
-            }
-            throw e;
-          }),
-        ),
-    );
-    const authData = plainToClass(AuthApiDto, response.data);
-    const expiresIn = (authData.expiresIn - 15) * 1000;
+        },
+      )
+      .catch((e) => {
+        if (e.code === 'ERR_BAD_REQUEST') {
+          throw new AuthBadRequestException(e.response.data);
+        }
+        throw e;
+      });
+    const authData = plainToClass(AuthApiBancoBrasilDto, response.data);
+    const expiresIn = (authData.expiresIn - 30) * 1000;
     await this.cacheManager.set(this.cacheKey(), authData, expiresIn);
     return authData;
   }
 
-  private async getCredentials(): Promise<AuthApiDto> {
+  private async getCredentials(): Promise<AuthApiBancoBrasilDto> {
     const accessToken =
-      (await this.cacheManager.get<AuthApiDto>(this.cacheKey())) ||
+      (await this.cacheManager.get<AuthApiBancoBrasilDto>(this.cacheKey())) ||
       (await this.authenticate());
 
     return accessToken;
   }
 
+  private get apiUrl(): string {
+    return {
+      sandbox: 'https://api.hm.bb.com.br',
+      production: 'https://api.bb.com.br',
+    }[this.getApiEnv];
+  }
+
   private get oauthUrl(): string {
     return {
-      sandbox: 'https://oauth.sandbox.bb.com.br',
+      sandbox: 'https://oauth.hm.bb.com.br',
       production: 'https://oauth.bb.com.br',
     }[this.getApiEnv];
   }
@@ -110,7 +108,7 @@ export class BancoBrasilClient {
     ).toString('base64');
   }
 
-  private get authPayload(): object {
+  private get authPayload(): { grant_type: string; scope: string } {
     return {
       grant_type: 'client_credentials',
       scope: 'cobrancas.boletos-info cobrancas.boletos-requisicao',
