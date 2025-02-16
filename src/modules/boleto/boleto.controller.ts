@@ -12,21 +12,33 @@ import { ApiHeaders, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Account } from '../../core/decorators/account.decorator';
 import { RecordValidationErrorDto } from '../../core/dtos/record-validation-error.dto';
 import { AccountGuard } from '../../core/guards/account.guard';
-import { Account as AccountEntity } from '../account/entities/account.entity';
+import { Account as AccountEntity } from '../../entities/account.entity';
+import { Boleto } from '../../entities/boleto.entity';
+import { AccountService } from '../account/account.service';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { FindBoletoParamsDto } from './dtos/find-boleto-params.dto';
 import { UpdateBoletoDto } from './dtos/update-boleto.dto';
-import { Boleto } from './entities/boleto.entity';
 
 @ApiTags('Boletos')
 @Controller('boletos')
 @UseGuards(AccountGuard)
 export class BoletoController {
-  constructor(private readonly boletoService: BoletoService) {}
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly boletoService: BoletoService,
+  ) {}
+
+  @Get('conciliation')
+  @ApiResponse({ status: HttpStatus.OK })
+  @ApiHeaders([{ name: 'account-id', required: true }])
+  async conciliation(@Account() account: AccountEntity): Promise<void> {
+    await this.boletoService.conciliation(account);
+  }
 
   @Get(':id/register')
   @ApiResponse({ status: HttpStatus.OK, type: Boleto })
+  @ApiHeaders([{ name: 'account-id', required: true }])
   async register(@Param() { id }: FindBoletoParamsDto): Promise<Boleto> {
     const boleto = await this.boletoService.findOne(
       { id },

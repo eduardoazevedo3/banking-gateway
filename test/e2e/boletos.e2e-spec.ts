@@ -16,10 +16,10 @@ import { AppListenerModule } from '../../src/app.listener.module';
 import { AppModule } from '../../src/app.module';
 import { BadRequestFilter } from '../../src/core/filters/bad-request.filter';
 import { EntityNotFoundFilter } from '../../src/core/filters/entity-not-found.filter';
-import { Account } from '../../src/modules/account/entities/account.entity';
+import { Account } from '../../src/entities/account.entity';
+import { Boleto } from '../../src/entities/boleto.entity';
 import { BancoBrasilClient } from '../../src/modules/banking/banco-brasil/banco-brasil.client';
 import { BoletoBankingService } from '../../src/modules/banking/boleto.banking.service';
-import { Boleto } from '../../src/modules/boleto/entities/boleto.entity';
 import { BoletoStatusEnum } from '../../src/modules/boleto/enums/boleto-status.enum';
 import { accountMock } from '../mocks/account.mock';
 import { boletoMock } from '../mocks/boleto.mock';
@@ -92,6 +92,9 @@ describe('Boletos', () => {
         amount: 10,
         issueDate: '2024-08-10',
         dueDate: '2024-08-10',
+        paymentDate: undefined,
+        creditDate: undefined,
+        dischargeDate: undefined,
         discountAmount: undefined,
         fineAmount: undefined,
         interestAmount: undefined,
@@ -141,7 +144,7 @@ describe('Boletos', () => {
       );
 
       const job = await queue.add(
-        'boleto',
+        'register',
         { boletoId: boleto.id },
         { removeOnComplete: false },
       );
@@ -168,7 +171,7 @@ describe('Boletos', () => {
 
       try {
         const job = await queue.add(
-          'boleto',
+          'register',
           { boletoId: boleto.id },
           { removeOnComplete: false },
         );

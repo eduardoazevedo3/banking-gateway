@@ -1,4 +1,4 @@
-import { Boleto } from '../../../boleto/entities/boleto.entity';
+import { Boleto } from '../../../../entities/boleto.entity';
 import { BeneficiaryBoletoBancoBrasilDto } from '../dtos/beneficiary-boleto.banco-brasil.dto';
 import { CreateBoletoBancoBrasilDto } from '../dtos/create-boleto.banco-brasil.dto';
 import { DiscountBoletoBancoBrasilDto } from '../dtos/discount-boleto.banco-brasil.dto';
@@ -9,10 +9,12 @@ import { AcceptCodeBoletoBancoBrasilEnum } from '../enums/accept-code-boleto.ban
 import { DocumentTypeBoletoBancoBrasilEnum } from '../enums/document-type-boleto.banco-brasil.enum';
 import { ModalityCodeBoletoBancoBrasilEnum } from '../enums/modality-code-boleto.banco-brasil.enum';
 import { YesNoBoletoBancoBrasilEnum } from '../enums/yes-no-boleto.banco-brasil.enum';
-import { TIssueDataBoleto } from '../types/issue-data-boleto.type';
+import { TIssueDataBoletoBancoBrasil } from '../types/issue-data-boleto.banco-brasil.type';
 
 export class CreateBoletoBancoBrasilTransform {
-  transform(boleto: Boleto<TIssueDataBoleto>): CreateBoletoBancoBrasilDto {
+  transform(
+    boleto: Boleto<TIssueDataBoletoBancoBrasil>,
+  ): CreateBoletoBancoBrasilDto {
     const boletoDto = new CreateBoletoBancoBrasilDto();
 
     boletoDto.agreementNumber = boleto.issueData.agreementNumber;
@@ -47,7 +49,7 @@ export class CreateBoletoBancoBrasilTransform {
   }
 
   private discountPayload(
-    boleto: Boleto<TIssueDataBoleto>,
+    boleto: Boleto<TIssueDataBoletoBancoBrasil>,
   ): DiscountBoletoBancoBrasilDto {
     if (!boleto.issueData.discount) return;
 
@@ -60,7 +62,7 @@ export class CreateBoletoBancoBrasilTransform {
   }
 
   private interestPayload(
-    boleto: Boleto<TIssueDataBoleto>,
+    boleto: Boleto<TIssueDataBoletoBancoBrasil>,
   ): InterestBoletoBancoBrasilDto {
     if (!boleto.issueData.interest) return;
 
@@ -72,7 +74,7 @@ export class CreateBoletoBancoBrasilTransform {
   }
 
   private finePayload(
-    boleto: Boleto<TIssueDataBoleto>,
+    boleto: Boleto<TIssueDataBoletoBancoBrasil>,
   ): FineBoletoBancoBrasilDto {
     if (!boleto.issueData.fine) return;
 
@@ -85,7 +87,7 @@ export class CreateBoletoBancoBrasilTransform {
   }
 
   private payerPayload(
-    boleto: Boleto<TIssueDataBoleto>,
+    boleto: Boleto<TIssueDataBoletoBancoBrasil>,
   ): PayerBoletoBancoBrasilDto {
     const boletoPayerDto = new PayerBoletoBancoBrasilDto();
     boletoPayerDto.documentType =
@@ -103,7 +105,7 @@ export class CreateBoletoBancoBrasilTransform {
   }
 
   private beneficiaryPayload(
-    boleto: Boleto<TIssueDataBoleto>,
+    boleto: Boleto<TIssueDataBoletoBancoBrasil>,
   ): BeneficiaryBoletoBancoBrasilDto {
     const boletoBeneficiaryDto = new BeneficiaryBoletoBancoBrasilDto();
     boletoBeneficiaryDto.documentType =

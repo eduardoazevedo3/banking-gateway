@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv';
-
 import { DataSource } from 'typeorm';
 
-dotenv.config({ path: '../.env' });
+const ENV_FILE_PATH = `../.env${(process.env.NODE_ENV && `.${process.env.NODE_ENV}`) || ''}`;
+dotenv.config({ path: ENV_FILE_PATH });
 
 export const dataSource = new DataSource({
   type: 'mysql',

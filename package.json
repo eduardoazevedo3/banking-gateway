@@ -23,7 +23,9 @@
     "migrations:config": "npm --prefix ./db/",
     "migrations:create": "npm run migrations:config -- run migrations:create",
     "migrations:revert": "npm run migrations:config -- run migrations:revert",
-    "migrations:run": "npm run migrations:config -- run migrations:run"
+    "migrations:run": "npm run migrations:config -- run migrations:run",
+    "migrations:config:test": "NODE_ENV=test npm --prefix ./db/",
+    "migrations:run:test": "npm run migrations:config:test -- run migrations:run"
   },
   "dependencies": {
     "@bull-board/api": "^5.21.4",
@@ -37,11 +39,13 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/schedule": "^4.1.2",
     "@nestjs/swagger": "^7.4.0",
     "@nestjs/typeorm": "^10.0.2",
     "axios": "^1.7.4",
     "bullmq": "^5.12.12",
     "cache-manager": "^5.7.6",
+    "cache-manager-redis-yet": "^5.1.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "date-fns": "^3.6.0",

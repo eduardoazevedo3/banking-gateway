@@ -9,13 +9,14 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import { Account } from '../../account/entities/account.entity';
-import { BoletoEntityTypeEnum } from '../enums/boleto-entity-type.enum';
-import { BoletoIssuingBankEnum } from '../enums/boleto-issuing-bank.enum';
-import { BoletoStatusEnum } from '../enums/boleto-status.enum';
+import { BoletoEntityTypeEnum } from '../modules/boleto/enums/boleto-entity-type.enum';
+import { BoletoIssuingBankEnum } from '../modules/boleto/enums/boleto-issuing-bank.enum';
+import { BoletoStatusEnum } from '../modules/boleto/enums/boleto-status.enum';
+import { Account } from './account.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity('boletos')
-export class Boleto<T = object> {
+export class Boleto<T = object> extends BaseEntity<Boleto> {
   @ApiProperty({ example: 1 })
   @PrimaryGeneratedColumn()
   id: number;
@@ -57,14 +58,26 @@ export class Boleto<T = object> {
   issueData: T;
 
   @ApiProperty({ example: '2024-08-10' })
-  @Column('varchar', { name: 'issue_date' })
+  @Column('date', { name: 'issue_date' })
   issueDate: Date;
 
   @ApiProperty({ example: '2024-08-10' })
-  @Column('varchar', { name: 'due_date' })
+  @Column('date', { name: 'due_date' })
   dueDate: Date;
 
-  @ApiProperty({ example: 100.0 })
+  @ApiProperty({ example: '2024-08-10' })
+  @Column('date', { name: 'payment_date', nullable: true })
+  paymentDate: Date;
+
+  @ApiPropertyOptional({ example: '2024-08-10' })
+  @Column('date', { name: 'credit_date', nullable: true })
+  creditDate: Date;
+
+  @ApiPropertyOptional({ example: '2024-08-10' })
+  @Column('date', { name: 'discharge_date', nullable: true })
+  dischargeDate: Date;
+
+  @ApiPropertyOptional({ example: 100.0 })
   @Column('decimal')
   amount: number;
 
@@ -83,6 +96,10 @@ export class Boleto<T = object> {
   @ApiPropertyOptional({ example: 10.0 })
   @Column('decimal', { name: 'fee_amount', nullable: false })
   feeAmount?: number;
+
+  @ApiPropertyOptional({ example: 100.0 })
+  @Column('decimal', { name: 'received_amount' })
+  receivedAmount?: number;
 
   @ApiPropertyOptional({ example: 30 })
   @Column('integer', { name: 'protest_days', nullable: false })

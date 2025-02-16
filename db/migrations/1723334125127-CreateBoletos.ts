@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateBoletos1723334125127 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`--sql
+    await queryRunner.query(`-- sql
 			CREATE TABLE boletos (
 				id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				account_id BIGINT NOT NULL,
@@ -14,11 +14,15 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
 				issue_data JSON NOT NULL,
 				issue_date DATE NOT NULL,
 				due_date DATE NOT NULL,
+				payment_date DATE,
+				credit_date DATE,
+				discharge_date DATE,
 				amount DECIMAL(10, 2) NOT NULL,
 				discount_amount DECIMAL(10, 2),
 				fine_amount DECIMAL(10, 2),
 				interest_amount DECIMAL(10, 2),
 				fee_amount DECIMAL(10, 2),
+				received_amount DECIMAL(10, 2),
 				protest_days INT,
 				negativation_days INT,
 				negativation_agency VARCHAR(255),
@@ -54,6 +58,8 @@ export class CreateBoletos1723334125127 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE boletos`);
+    await queryRunner.query(`-- sql
+      DROP TABLE boletos;
+    `);
   }
 }
