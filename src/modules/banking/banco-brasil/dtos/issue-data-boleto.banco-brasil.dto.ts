@@ -71,6 +71,16 @@ export class IssueDataBoletoBancoBrasilDto {
   @ApiProperty({ example: '123456789' })
   @MaxLength(9)
   @IsString()
+  accountNumber: string;
+
+  @ApiProperty({ example: '1' })
+  @MaxLength(1)
+  @IsString()
+  agencyPrefixCode: string;
+
+  @ApiProperty({ example: '123456789' })
+  @MaxLength(9)
+  @IsString()
   agreementNumber: string;
 
   @ApiProperty({

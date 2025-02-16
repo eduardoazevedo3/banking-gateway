@@ -77,14 +77,14 @@ export class BancoBrasilClient {
 
   private get apiUrl(): string {
     return {
-      sandbox: 'https://api.sandbox.bb.com.br',
+      sandbox: 'https://api.hm.bb.com.br',
       production: 'https://api.bb.com.br',
     }[this.getApiEnv];
   }
 
   private get oauthUrl(): string {
     return {
-      sandbox: 'https://oauth.sandbox.bb.com.br',
+      sandbox: 'https://oauth.hm.bb.com.br',
       production: 'https://oauth.bb.com.br',
     }[this.getApiEnv];
   }
@@ -108,7 +108,7 @@ export class BancoBrasilClient {
     ).toString('base64');
   }
 
-  private get authPayload(): object {
+  private get authPayload(): { grant_type: string; scope: string } {
     return {
       grant_type: 'client_credentials',
       scope: 'cobrancas.boletos-info cobrancas.boletos-requisicao',
