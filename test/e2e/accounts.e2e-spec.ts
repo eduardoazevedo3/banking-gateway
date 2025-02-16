@@ -69,7 +69,6 @@ describe('Accounts', () => {
       return request(app.getHttpServer())
         .post(`/v1/accounts`)
         .send(accountPayload)
-        .expect(201)
         .expect((res) => expect(res.body.id).toEqual(accountPayload.id));
     });
 

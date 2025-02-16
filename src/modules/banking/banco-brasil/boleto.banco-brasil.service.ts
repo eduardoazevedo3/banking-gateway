@@ -83,13 +83,14 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
       'BoletoBancoBrasilService.conciliation',
     );
 
+    const issueData = account.issueData as TIssueDataBoletoBancoBrasil;
     const findAllParams = Object.assign(new FindAllBoletoBancoBrasilDto(), {
       startDate: params.startDate,
       endDate: params.endDate,
-      accountNumber: params.accountNumber,
-      agencyPrefixCode: params.agencyPrefixCode,
-      billingWalletNumber: params.billingWalletNumber,
-      billingWalletVariationNumber: params.billingWalletNumber,
+      accountNumber: issueData.accountNumber, // 12345678
+      agencyPrefixCode: issueData.agencyPrefixCode, // 1
+      billingWalletNumber: issueData.walletNumber, // 17
+      billingWalletVariationNumber: issueData.walletVariationNumber, // 35
       page:
         params.page === 1
           ? params.page
@@ -111,7 +112,7 @@ export class BoletoBancoBrasilService implements IBoletoBanking {
     try {
       const { data } = await bancoBrasilClient.request(
         'POST',
-        `cobrancas/v2/convenios/${params.agreementNumber}/listar-retorno-movimento`,
+        `cobrancas/v2/convenios/${issueData.agreementNumber}/listar-retorno-movimento`,
         payload,
       );
 

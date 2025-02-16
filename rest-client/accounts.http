@@ -4,7 +4,7 @@ POST http://localhost:3000/v1/accounts HTTP/1.1
 content-type: application/json
 
 {
-  "providerAccountId": "Ab-123-456-012",
+  "providerAccountId": "Ab-123-456-789",
   "description": "Sacador Cobrancas S.A",
   "documentType": "CPF",
   "documentNumber": "123.456.789-09",
@@ -15,8 +15,10 @@ content-type: application/json
   },
   "issueData": {
     "agreementNumber": "123456",
-    "walletNumber": "12",
-    "walletVariationNumber": "123456",
+    "accountNumber": "12345678",
+    "agencyPrefixCode": "1",
+    "walletNumber": "17",
+    "walletVariationNumber": "35",
     "modalityCode": "01"
   }
 }

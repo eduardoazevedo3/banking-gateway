@@ -17,8 +17,10 @@ export function accountMock(account?: Partial<Account>): Account {
     }),
     issueData: {
       agreementNumber: faker.string.numeric(6),
+      accountNumber: faker.string.numeric(8),
+      agencyPrefixCode: faker.string.numeric(1),
       walletNumber: faker.string.numeric(2),
-      walletVariationNumber: faker.string.numeric(6),
+      walletVariationNumber: faker.string.numeric(2),
       modalityCode: '01',
     },
     createdAt: new Date(),

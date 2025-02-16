@@ -59,9 +59,7 @@ export class BoletoService {
       if (options?.skipFind) return boleto;
       return await this.findOne({ id: boleto.id });
     } catch (error) {
-      if (
-        error.message.includes('idx_boletos_account_id_covenant_id_our_number')
-      ) {
+      if (error.message.includes('idx_boletos_account_id_reference_code')) {
         throw new BadRequestException(['Reference code already exists']);
       }
       throw error;
@@ -85,13 +83,8 @@ export class BoletoService {
   async conciliation(account: Account): Promise<Job> {
     return await this.boletoQueue.add('conciliation', {
       accountId: account.id,
-      agreementNumber: account.providerAccountId,
       startDate: new Date('2024-11-01 00:00:00 -03:00'),
       endDate: new Date('2024-11-01 00:00:00 -03:00'),
-      accountNumber: 12345678,
-      agencyPrefixCode: 1,
-      billingWalletNumber: 17,
-      billingWalletVariationNumber: 35,
     });
   }
 }

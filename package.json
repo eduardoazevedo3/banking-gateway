@@ -23,7 +23,9 @@
     "migrations:config": "npm --prefix ./db/",
     "migrations:create": "npm run migrations:config -- run migrations:create",
     "migrations:revert": "npm run migrations:config -- run migrations:revert",
-    "migrations:run": "npm run migrations:config -- run migrations:run"
+    "migrations:run": "npm run migrations:config -- run migrations:run",
+    "migrations:config:test": "NODE_ENV=test npm --prefix ./db/",
+    "migrations:run:test": "npm run migrations:config:test -- run migrations:run"
   },
   "dependencies": {
     "@bull-board/api": "^5.21.4",

@@ -3,16 +3,16 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import * as crypto from 'crypto';
-import { Boleto } from '../../../entities/boleto.entity';
-import { AccountService } from '../../account/account.service';
-import { BoletoBankingService } from '../../banking/boleto.banking.service';
-import { BoletoService } from '../boleto.service';
-import { BoletoStatusEnum } from '../enums/boleto-status.enum';
+import { Boleto } from '../../entities/boleto.entity';
+import { AccountService } from '../account/account.service';
+import { BoletoBankingService } from '../banking/boleto.banking.service';
+import { BoletoService } from './boleto.service';
+import { BoletoStatusEnum } from './enums/boleto-status.enum';
 import {
   BoletoConciliationParams,
   BoletoGenericParams,
   BoletoOperationParams,
-} from '../types/boleto-params.type';
+} from './types/boleto-params.type';
 
 type BoletoJobName = 'register' | 'conciliation';
 
