@@ -1,4 +1,5 @@
 import { getQueueToken } from '@nestjs/bullmq';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   INestApplication,
@@ -28,6 +29,7 @@ describe('Boletos', () => {
   let app: INestApplication;
   let queue: Queue;
   let queueEvents: QueueEvents;
+  let cacheManager: Cache;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -49,9 +51,20 @@ describe('Boletos', () => {
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
     await app.init();
+
+    cacheManager = app.get<Cache>(CACHE_MANAGER);
   });
 
   afterAll(async () => {
+    if (cacheManager && 'store' in cacheManager) {
+      const store = cacheManager['store'] as any;
+
+      if (store?.client) {
+        const redisClient = store.client;
+        await redisClient.quit();
+      }
+    }
+
     await queueEvents.close();
     await app.close();
   });
