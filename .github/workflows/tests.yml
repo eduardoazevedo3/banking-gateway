@@ -36,7 +36,7 @@ jobs:
       run: docker compose up -d
 
     - name: Exceute migrations
-      run: migrations:run:test
+      run: npm run migrations:run:test
 
     - name: Install dependencies
       run: npm ci
