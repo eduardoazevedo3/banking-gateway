@@ -35,11 +35,11 @@ jobs:
     - name: Start services
       run: docker compose up -d
 
-    - name: Exceute migrations
-      run: npm run migrations:run:test
-
     - name: Install dependencies
       run: npm ci
+
+    - name: Exceute migrations
+      run: npm run migrations:run:test
 
     - name: Run E2E tests
       run: npm run test:e2e
