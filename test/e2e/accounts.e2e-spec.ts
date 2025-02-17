@@ -1,3 +1,4 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   INestApplication,
   ValidationPipe,
@@ -17,6 +18,7 @@ import { accountMock } from '../mocks/account.mock';
 
 describe('Accounts', () => {
   let app: INestApplication;
+  let cacheManager: Cache;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -33,9 +35,19 @@ describe('Accounts', () => {
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
     await app.init();
+
+    cacheManager = app.get<Cache>(CACHE_MANAGER);
   });
 
   afterAll(async () => {
+    if (cacheManager && 'store' in cacheManager) {
+      const store = cacheManager['store'] as any;
+
+      if (store?.client) {
+        const redisClient = store.client;
+        await redisClient.quit();
+      }
+    }
     await app.close();
   });
 
