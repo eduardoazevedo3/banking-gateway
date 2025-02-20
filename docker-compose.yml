@@ -15,8 +15,3 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-
-networks:
-  default:
-    name: banking-gateway
-    external: true
