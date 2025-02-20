@@ -36,7 +36,7 @@ jobs:
       run: docker network create banking-gateway
 
     - name: Start services
-      run: docker compose up -d mysql
+      run: docker compose up -d
 
     - name: Install dependencies
       run: npm ci
