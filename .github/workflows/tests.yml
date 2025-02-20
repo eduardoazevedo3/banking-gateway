@@ -33,7 +33,7 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: Start services
-      run: docker compose up -d
+      run: docker compose up -d mysql
 
     - name: Install dependencies
       run: npm ci
