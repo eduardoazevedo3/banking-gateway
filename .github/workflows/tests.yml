@@ -1,6 +1,6 @@
 name: E2E Tests
 
-on: [push, pull_request]
+on: [pull_request]
 
 concurrency:
   group: ${{ github.workflow }}
@@ -31,6 +31,9 @@ jobs:
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
+
+    - name: Docker network
+      run: docker network create banking-gateway
 
     - name: Start services
       run: docker compose up -d mysql
