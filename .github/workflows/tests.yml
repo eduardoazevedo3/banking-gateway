@@ -32,6 +32,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
+    - name: Cache NPM dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-cache-
+
     - name: Docker network
       run: docker network create banking-gateway
 
