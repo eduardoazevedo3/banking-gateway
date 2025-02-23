@@ -6,6 +6,7 @@ import { bullAsyncOptions } from './config/bull.config';
 import { databaseAsyncOptions } from './config/database.config';
 import { GlobalCacheModule } from './core/cache/global-cache.module';
 import { BoletoListenerModule } from './modules/boleto/boleto.listener.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { BoletoListenerModule } from './modules/boleto/boleto.listener.module';
     ScheduleModule.forRoot(),
     GlobalCacheModule,
     BoletoListenerModule,
+    HealthModule,
   ],
 })
 export class AppListenerModule {}
