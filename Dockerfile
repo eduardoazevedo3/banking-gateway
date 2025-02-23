@@ -23,4 +23,4 @@ COPY --from=build /app/node_modules /app/node_modules
 EXPOSE 3000
 
 # Command to run the application
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
