@@ -50,5 +50,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             mkdir -p ~/banking-gateway
+            cd ~/banking-gateway
             docker pull ${{ secrets.DOCKER_USERNAME }}/banking-gateway:latest
             bash deploy.sh -e production
