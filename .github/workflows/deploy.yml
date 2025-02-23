@@ -52,5 +52,5 @@ jobs:
             mkdir -p ~/banking-gateway
             cd ~/banking-gateway
             docker pull ${{ secrets.DOCKER_USERNAME }}/banking-gateway:latest
-            docker run --rm ${{ secrets.DOCKER_USERNAME }}/banking-gateway:latest npm run migration:run
+            docker run --rm --env-file production.env ${{ secrets.DOCKER_USERNAME }}/banking-gateway:latest npm run migration:run
             bash deploy.sh -e production
