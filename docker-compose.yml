@@ -4,17 +4,27 @@ services:
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: default
-      MYSQL_DATABASE: banking_gateway_test
+      MYSQL_DATABASE: banking
       MYSQL_USER: default
       MYSQL_PASSWORD: default
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
 
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
 
 networks:
   default:
