@@ -11,6 +11,7 @@ export const bullAsyncOptions: SharedBullAsyncConfiguration = {
     connection: {
       host: configService.redis.host,
       port: configService.redis.port,
+      db: configService.redis.db,
     },
   }),
   inject: [AppConfigService],
