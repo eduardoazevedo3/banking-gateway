@@ -9,6 +9,7 @@ type TAppConfig = {
 type TRedis = {
   host: string;
   port: number;
+  db: number;
 };
 
 type TDatabaseConfig = {
