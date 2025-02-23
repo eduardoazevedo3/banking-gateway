@@ -1,6 +1,8 @@
 # Stage 1: Build
 FROM node:20-alpine as build
 
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 COPY package*.json ./
