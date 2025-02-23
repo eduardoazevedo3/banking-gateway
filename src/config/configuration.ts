@@ -7,6 +7,8 @@ export default () => ({
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT) || 6379,
     db: parseInt(process.env.REDIS_DB) || 0,
+    username: process.env.REDIS_USERNAME || undefined,
+    password: process.env.REDIS_PASSWORD || undefined,
   },
   database: {
     host: process.env.DB_HOST,
