@@ -9,6 +9,7 @@ import { CoreModule } from './core/core.module';
 import { RequestLoggerMiddleware } from './core/middlewares/request-logger.middleware';
 import { AccountModule } from './modules/account/account.module';
 import { BoletoModule } from './modules/boleto/boleto.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { BoletoModule } from './modules/boleto/boleto.module';
     CoreModule,
     AccountModule,
     BoletoModule,
+    HealthModule,
   ],
 })
 export class AppModule implements NestModule {
