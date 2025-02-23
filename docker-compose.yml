@@ -4,7 +4,7 @@ services:
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: default
-      MYSQL_DATABASE: banking
+      MYSQL_DATABASE: banking_gateway_test
       MYSQL_USER: default
       MYSQL_PASSWORD: default
     ports:
