@@ -4,6 +4,7 @@ FROM node:20-alpine as build
 WORKDIR /app
 
 COPY package*.json ./
+COPY db ./
 RUN npm ci
 
 COPY . .
@@ -15,6 +16,7 @@ FROM node:20-alpine AS app
 
 WORKDIR /app
 
+COPY --from=build /app/db ./db
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules /app/node_modules
