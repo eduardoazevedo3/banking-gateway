@@ -1,3 +1,3 @@
 #!/bin/bash
 
-node dist/src/main.listener.js
+node ../dist/src/main.listener.js
