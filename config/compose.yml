@@ -1,5 +1,5 @@
 services:
-  app:
+  app: &base
     restart: always
     image: eduardoazevedo3/banking-gateway:latest
     env_file:
@@ -25,3 +25,12 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+
+  listener:
+    <<: *base
+    entrypoint: ./entrypoint-listener.sh
+
+networks:
+  default:
+    name: banking-gateway
+    external: true

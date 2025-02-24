@@ -7,13 +7,16 @@ import { BadRequestFilter } from './core/filters/bad-request.filter';
 import { EntityNotFoundFilter } from './core/filters/entity-not-found.filter';
 
 async function bootstrap() {
+  const port = process.env.APP_PORT || 3000;
   const app = await NestFactory.create(AppModule);
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalFilters(new EntityNotFoundFilter(), new BadRequestFilter());
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   if (process.env.NODE_ENV !== 'production') {
@@ -27,6 +30,6 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
   }
 
-  await app.listen(3000);
+  await app.listen(port);
 }
 bootstrap();
