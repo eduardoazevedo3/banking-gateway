@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/usr/bin/env ash
 
-node ../dist/src/main.listener.js
+node /app/dist/src/main.listener.js
