@@ -28,7 +28,7 @@ services:
 
   listener:
     <<: *base
-    entrypoint: ./entrypoint-listener.sh
+    entrypoint: ./config/entrypoint-listener.sh
 
 networks:
   default:
