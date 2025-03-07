@@ -24,7 +24,7 @@ export class AccountService {
 
   async findOne(id: number, options?: AccountOptions): Promise<Account> {
     const account = await this.connection.manager[
-      options?.findOrFail ? 'findByOneOrFail' : 'findByOne'
+      options?.findOrFail ? 'findOneByOrFail' : 'findOneBy'
     ](Account, { id: Equal(id) });
 
     if (!account && !options?.findOrFail) return;
@@ -42,7 +42,11 @@ export class AccountService {
       ...accountDto,
       credentials: credentials && JSON.stringify(credentials),
     });
-    const createdAccount = await this.findOne(account.id, { findOrFail: true });
+
+    const createdAccount = await this.findOne(account.id, {
+      findOrFail: true,
+      encrypted: false,
+    });
 
     return {
       ...createdAccount,
