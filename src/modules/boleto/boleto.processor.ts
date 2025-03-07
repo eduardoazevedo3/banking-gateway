@@ -96,7 +96,10 @@ export class BoletoProcessor extends WorkerHost {
   }
 
   private async conciliation(params: BoletoConciliationParams): Promise<void> {
-    const account = await this.accountService.findOneOrFail(params.accountId);
+    const account = await this.accountService.findOne(params.accountId, {
+      encrypted: false,
+      findOrFail: true,
+    });
     const perPage = 500;
 
     const boletoParams = {

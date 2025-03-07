@@ -30,7 +30,7 @@ export class AccountController {
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, type: Account })
   async findOne(@Param('id') id: string): Promise<Account> {
-    return this.accountService.findOneOrFail(+id);
+    return this.accountService.findOne(+id, { findOrFail: true });
   }
 
   @Post()
