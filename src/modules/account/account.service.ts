@@ -4,6 +4,11 @@ import { Account } from '../../entities/account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 
+type AccountOptions = {
+  encrypted?: boolean;
+  findOrFail?: boolean;
+};
+
 @Injectable()
 export class AccountService {
   constructor(private readonly connection: DataSource) {}
@@ -17,24 +22,17 @@ export class AccountService {
     });
   }
 
-  async findOneOrFail(id: number): Promise<Account> {
-    const account = await this.connection.manager.findOneByOrFail(Account, {
-      id: Equal(id),
-    });
+  async findOne(id: number, options?: AccountOptions): Promise<Account> {
+    const account = await this.connection.manager[
+      options?.findOrFail ? 'findByOneOrFail' : 'findByOne'
+    ](Account, { id: Equal(id) });
 
-    // const credentials = account.credentials;
-    // account.credentials = credentials && '[ENCRYPTED]';
-    return account;
-  }
+    if (!account && !options?.findOrFail) return;
 
-  async findOne(id: number): Promise<Account> {
-    const account = await this.connection.manager.findOneBy(Account, {
-      id: Equal(id),
-    });
-    if (!account) return;
-
-    const credentials = account.credentials;
-    account.credentials = credentials && '[ENCRYPTED]';
+    if (options?.encrypted !== false) {
+      const credentials = account.credentials;
+      account.credentials = credentials && '[ENCRYPTED]';
+    }
     return account;
   }
 
@@ -44,7 +42,7 @@ export class AccountService {
       ...accountDto,
       credentials: credentials && JSON.stringify(credentials),
     });
-    const createdAccount = await this.findOneOrFail(account.id);
+    const createdAccount = await this.findOne(account.id, { findOrFail: true });
 
     return {
       ...createdAccount,
@@ -53,7 +51,7 @@ export class AccountService {
   }
 
   async update(id: number, accountDto: UpdateAccountDto): Promise<Account> {
-    const account = await this.findOneOrFail(id);
+    const account = await this.findOne(id, { findOrFail: true });
     const { credentials } = accountDto;
 
     try {
@@ -63,7 +61,7 @@ export class AccountService {
         credentials: credentials && JSON.stringify(credentials),
       });
 
-      return await this.findOneOrFail(id);
+      return await this.findOne(id, { findOrFail: true });
     } catch (error) {
       if (error.message.includes('idx_accounts_provider_account_id')) {
         throw new BadRequestException(['providerAccountId already exists']);
