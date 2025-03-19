@@ -33,7 +33,8 @@ fi
 # Main deployment logic
 deploy() {
   echo "Starting deployment to $ENVIRONMENT environment..."
-  # Add deployment commands here
+  docker service update banking_gateway_app --force
+  docker service update banking_gateway_listener --force
   echo "Deployment to $ENVIRONMENT environment completed successfully."
 }
 
