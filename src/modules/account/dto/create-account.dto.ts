@@ -1,16 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Matches, MaxLength } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import { IsUnique } from '../../../core/validators';
 import { Account } from '../../../entities/account.entity';
 import { BaseAccountDto } from './base-account.dto';
 
 export class CreateAccountDto extends BaseAccountDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Ab.12345-6789',
     description:
       'Your account reference code identifier.' +
       'Valid characters: a-z, A-Z, 0-9, dot and hyphen',
   })
+  @IsOptional()
   @IsString()
   @MaxLength(64)
   @Matches(/^[a-zA-Z0-9.-]+$/, {

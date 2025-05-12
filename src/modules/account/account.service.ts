@@ -37,21 +37,28 @@ export class AccountService {
   }
 
   async create(accountDto: CreateAccountDto): Promise<Account> {
-    const { credentials } = accountDto;
-    const account = await this.connection.manager.save(Account, {
-      ...accountDto,
-      credentials: credentials && JSON.stringify(credentials),
-    });
+    try {
+      const { credentials } = accountDto;
+      const account = await this.connection.manager.save(Account, {
+        ...accountDto,
+        credentials: credentials && JSON.stringify(credentials),
+      });
 
-    const createdAccount = await this.findOne(account.id, {
-      findOrFail: true,
-      encrypted: false,
-    });
+      const createdAccount = await this.findOne(account.id, {
+        findOrFail: true,
+        encrypted: false,
+      });
 
-    return {
-      ...createdAccount,
-      credentials: JSON.parse(createdAccount.credentials),
-    };
+      return {
+        ...createdAccount,
+        credentials: JSON.parse(createdAccount.credentials),
+      };
+    } catch (error) {
+      if (error.message.includes('idx_accounts_reference_code')) {
+        throw new BadRequestException(['Reference code already exists']);
+      }
+      throw error;
+    }
   }
 
   async update(id: number, accountDto: UpdateAccountDto): Promise<Account> {
