@@ -49,6 +49,10 @@ export class Account {
   @Column('json', { name: 'issue_data' })
   issueData: object;
 
+  @ApiProperty({ example: { key: 'value' } })
+  @Column('json', { name: 'amount_adjustments' })
+  amountAdjustments: object;
+
   @CreateDateColumn({ type: 'datetime', name: 'created_at', precision: 3 })
   createdAt: Date;
 
