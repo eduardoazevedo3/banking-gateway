@@ -25,5 +25,5 @@ export class CreateAccountDto extends BaseAccountDto {
     },
     message: 'providerAccountId already exists',
   })
-  providerAccountId: string;
+  providerAccountId?: string;
 }
