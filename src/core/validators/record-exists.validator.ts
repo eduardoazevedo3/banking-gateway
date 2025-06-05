@@ -22,9 +22,11 @@ export class RecordExistsValidator implements ValidatorConstraintInterface {
     const [context] = args.constraints;
     if (!value) return false;
 
-    Object.keys(context.scope).forEach((key) => {
-      where[key] = Equal(args.object[context.scope[key]]);
-    });
+    if (context.scope) {
+      Object.keys(context.scope).forEach((key) => {
+        where[key] = Equal(args.object[context.scope[key]]);
+      });
+    }
 
     const isRecordExists = await this.connection.manager.findOneBy(
       context.entity,

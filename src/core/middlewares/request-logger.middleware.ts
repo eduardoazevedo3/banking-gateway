@@ -10,10 +10,10 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
     Logger.debug(`Started ${method} "${url}" for ${ip}`, context);
 
-    if (Object.keys(body).length !== 0)
+    if (body && Object.keys(body).length !== 0)
       Logger.debug(`Body: ${JSON.stringify(body)}`, context);
 
-    if (Object.keys(queryParams).length !== 0)
+    if (queryParams && Object.keys(queryParams).length !== 0)
       Logger.debug(`QueryParams: ${JSON.stringify(queryParams)}`, context);
 
     response.on('close', () => {
