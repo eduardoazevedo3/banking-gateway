@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:20-alpine as build
+FROM node:22-alpine as build
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN npm run build
 RUN npm prune --omit=dev
 
 # Stage 2: app
-FROM node:20-alpine AS app
+FROM node:22-alpine AS app
 
 RUN apk add --no-cache curl
 
