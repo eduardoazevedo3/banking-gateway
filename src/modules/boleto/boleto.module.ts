@@ -16,7 +16,7 @@ import { BoletoService } from './boleto.service';
     }),
     BullBoardModule.forFeature({
       name: 'boleto',
-      adapter: BullMQAdapter,
+      adapter: BullMQAdapter as any,
     }),
     AccountModule,
   ],
