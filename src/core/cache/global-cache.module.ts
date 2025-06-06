@@ -11,7 +11,15 @@ import { AppConfigService } from '../../config/app-config.service';
       imports: [AppConfigModule],
       inject: [AppConfigService],
       useFactory: async (appConfigService: AppConfigService) => {
-        const store = await redisStore({ socket: appConfigService.redis });
+        const { host, port, db: database, username, password } = appConfigService.redis;
+
+        const store = await redisStore({
+          socket: { host, port },
+          database,
+          username,
+          password,
+          ttl: 60 * 60 * 24, // 24 hours
+        });
         return { store };
       },
     }),
