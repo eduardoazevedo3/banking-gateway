@@ -66,13 +66,16 @@ export class AccountService {
     const { credentials } = accountDto;
 
     try {
-      await this.connection.manager.save(Account, {
+      const updatedAccount = await this.connection.manager.save(Account, {
         ...account,
         ...accountDto,
         credentials: credentials && JSON.stringify(credentials),
       });
 
-      return await this.findOne(id, { findOrFail: true });
+      return {
+        ...updatedAccount,
+        credentials: credentials && '[ENCRYPTED]',
+      };
     } catch (error) {
       if (error.message.includes('idx_accounts_provider_account_id')) {
         throw new BadRequestException(['providerAccountId already exists']);
