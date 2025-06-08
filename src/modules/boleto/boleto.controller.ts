@@ -14,7 +14,6 @@ import { RecordValidationErrorDto } from '../../core/dtos/record-validation-erro
 import { AccountGuard } from '../../core/guards/account.guard';
 import { Account as AccountEntity } from '../../entities/account.entity';
 import { Boleto } from '../../entities/boleto.entity';
-import { AccountService } from '../account/account.service';
 import { BoletoService } from './boleto.service';
 import { CreateBoletoDto } from './dtos/create-boleto.dto';
 import { FindBoletoParamsDto } from './dtos/find-boleto-params.dto';
@@ -24,10 +23,7 @@ import { UpdateBoletoDto } from './dtos/update-boleto.dto';
 @Controller('boletos')
 @UseGuards(AccountGuard)
 export class BoletoController {
-  constructor(
-    private readonly accountService: AccountService,
-    private readonly boletoService: BoletoService,
-  ) {}
+  constructor(private readonly boletoService: BoletoService) {}
 
   @Get('conciliation')
   @ApiResponse({ status: HttpStatus.OK })
