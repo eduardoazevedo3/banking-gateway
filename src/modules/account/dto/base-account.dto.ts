@@ -7,7 +7,6 @@ import {
   IsString,
   Length,
   Matches,
-  Max,
   MaxLength,
   ValidateNested,
 } from 'class-validator';
@@ -39,32 +38,6 @@ export class AdjustmentParamsDto {
   @IsOptional()
   @IsNumber()
   amount?: number;
-}
-
-class AmountAdjustmentsDto {
-  @ApiPropertyOptional({ type: AdjustmentParamsDto })
-  @Type(() => AdjustmentParamsDto)
-  @IsOptional()
-  @ValidateNested()
-  discount?: AdjustmentParamsDto;
-
-  @ApiPropertyOptional({ type: AdjustmentParamsDto })
-  @Type(() => AdjustmentParamsDto)
-  @IsOptional()
-  @ValidateNested()
-  interest?: AdjustmentParamsDto;
-
-  @ApiPropertyOptional({ type: AdjustmentParamsDto })
-  @Type(() => AdjustmentParamsDto)
-  @IsOptional()
-  @ValidateNested()
-  fine?: AdjustmentParamsDto;
-
-  @ApiPropertyOptional({ example: 60 })
-  @IsOptional()
-  @IsNumber()
-  @Max(60)
-  receiptDaysLimit?: number;
 }
 
 export class BaseAccountDto {
@@ -118,10 +91,4 @@ export class BaseAccountDto {
   @IsOptional()
   @ValidateNested()
   issueData?: IssueDataBoletoBancoBrasilDto;
-
-  @ApiProperty({ type: AmountAdjustmentsDto })
-  @Type(() => AmountAdjustmentsDto)
-  @IsOptional()
-  @ValidateNested()
-  amountAdjustments?: AmountAdjustmentsDto;
 }

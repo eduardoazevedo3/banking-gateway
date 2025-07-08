@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class NewMigration1746395279107 implements MigrationInterface {
+export class RemoveDocumentUniqueFromAccount1746395279107
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`-- sql
       ALTER TABLE accounts
