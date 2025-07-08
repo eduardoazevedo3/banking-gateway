@@ -37,21 +37,28 @@ export class AccountService {
   }
 
   async create(accountDto: CreateAccountDto): Promise<Account> {
-    const { credentials } = accountDto;
-    const account = await this.connection.manager.save(Account, {
-      ...accountDto,
-      credentials: credentials && JSON.stringify(credentials),
-    });
+    try {
+      const { credentials } = accountDto;
+      const account = await this.connection.manager.save(Account, {
+        ...accountDto,
+        credentials: credentials && JSON.stringify(credentials),
+      });
 
-    const createdAccount = await this.findOne(account.id, {
-      findOrFail: true,
-      encrypted: false,
-    });
+      const createdAccount = await this.findOne(account.id, {
+        findOrFail: true,
+        encrypted: false,
+      });
 
-    return {
-      ...createdAccount,
-      credentials: JSON.parse(createdAccount.credentials),
-    };
+      return {
+        ...createdAccount,
+        credentials: JSON.parse(createdAccount.credentials),
+      };
+    } catch (error) {
+      if (error.message.includes('idx_accounts_reference_code')) {
+        throw new BadRequestException(['Reference code already exists']);
+      }
+      throw error;
+    }
   }
 
   async update(id: number, accountDto: UpdateAccountDto): Promise<Account> {
@@ -59,13 +66,16 @@ export class AccountService {
     const { credentials } = accountDto;
 
     try {
-      await this.connection.manager.save(Account, {
+      const updatedAccount = await this.connection.manager.save(Account, {
         ...account,
         ...accountDto,
         credentials: credentials && JSON.stringify(credentials),
       });
 
-      return await this.findOne(id, { findOrFail: true });
+      return {
+        ...updatedAccount,
+        credentials: credentials && '[ENCRYPTED]',
+      };
     } catch (error) {
       if (error.message.includes('idx_accounts_provider_account_id')) {
         throw new BadRequestException(['providerAccountId already exists']);
@@ -74,7 +84,7 @@ export class AccountService {
     }
   }
 
-  async remove(id: number): Promise<void> {
+  async delete(id: number): Promise<void> {
     await this.connection.manager.delete(Account, id);
   }
 }
