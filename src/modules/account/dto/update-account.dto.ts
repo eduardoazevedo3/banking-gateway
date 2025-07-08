@@ -1,7 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
-import { Account } from '../../../core/decorators/account.decorator';
-import { IsUnique } from '../../../core/validators';
 import { BaseAccountDto } from './base-account.dto';
 
 export class UpdateAccountDto extends BaseAccountDto {
@@ -17,13 +15,6 @@ export class UpdateAccountDto extends BaseAccountDto {
   @Matches(/^[a-zA-Z0-9.-]+$/, {
     message:
       'providerAccountId can only contain letters, numbers, dots and hyphens',
-  })
-  @IsUnique({
-    context: {
-      entity: Account,
-      scope: ['providerAccountId'],
-    },
-    message: 'providerAccountId already exists',
   })
   providerAccountId?: string;
 }
