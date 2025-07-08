@@ -84,7 +84,7 @@ export class AccountService {
     }
   }
 
-  async remove(id: number): Promise<void> {
+  async delete(id: number): Promise<void> {
     await this.connection.manager.delete(Account, id);
   }
 }

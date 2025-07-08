@@ -63,7 +63,7 @@ export class AccountController {
     status: HttpStatus.BAD_REQUEST,
     type: RecordValidationErrorDto,
   })
-  async remove(@Param('id') id: string): Promise<void> {
-    await this.accountService.remove(+id);
+  async delete(@Param('id') id: string): Promise<void> {
+    await this.accountService.delete(+id);
   }
 }
