@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
+  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -12,6 +13,32 @@ import {
 import { DocumentTypeEnum } from '../../../core/enums/document-type.enum';
 import { AuthApiCredentialsBancoBrasilDto } from '../../banking/banco-brasil/dtos/auth-api.banco-brasil.dto';
 import { IssueDataBoletoBancoBrasilDto } from '../../banking/banco-brasil/dtos/issue-data-boleto.banco-brasil.dto';
+
+export enum AdjustmentTypeEnum {
+  NONE = 'NONE',
+  FIXED_AMOUNT = 'FIXED_AMOUNT',
+  PERCENTAGE = 'PERCENTAGE',
+}
+
+export class AdjustmentParamsDto {
+  @ApiProperty({
+    example: AdjustmentTypeEnum.PERCENTAGE,
+    enum: AdjustmentTypeEnum,
+    enumName: 'AdjustmentTypeEnum',
+  })
+  @IsEnum(AdjustmentTypeEnum)
+  type: AdjustmentTypeEnum;
+
+  @ApiProperty({ example: 0.33 })
+  @IsOptional()
+  @IsNumber()
+  percentage?: number;
+
+  @ApiProperty({ example: 100.0 })
+  @IsOptional()
+  @IsNumber()
+  amount?: number;
+}
 
 export class BaseAccountDto {
   @ApiProperty({ example: 'Sacador Pagamento S.A' })

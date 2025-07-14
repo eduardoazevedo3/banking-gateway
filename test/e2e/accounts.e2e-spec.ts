@@ -108,6 +108,31 @@ describe('Accounts', () => {
         );
     });
 
+    it('PATCH v1/accounts/:id with duplicate providerAccountId', async () => {
+      const createdAccount = await connection.manager.save(
+        Account,
+        accountMock(),
+      );
+
+      const accountPayload = {
+        ...createdAccount,
+        providerAccountId: account.providerAccountId,
+      };
+      accountPayload.credentials = JSON.parse(accountPayload.credentials);
+
+      return request(app.getHttpServer())
+        .patch(`/v1/accounts/${account.id}`)
+        .send(accountPayload)
+        .expect(400)
+        .expect((res) =>
+          expect(
+            res.body.message.some((msg) =>
+              msg.includes('providerAccountId already exists'),
+            ),
+          ).toBe(true),
+        );
+    });
+
     it('PATCH v1/accounts/:id with invalid payload', () => {
       const accountPayload = { ...account, description: null };
 

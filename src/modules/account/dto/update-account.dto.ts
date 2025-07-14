@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, Matches, MaxLength } from 'class-validator';
+import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import { BaseAccountDto } from './base-account.dto';
 
 export class UpdateAccountDto extends BaseAccountDto {
@@ -9,6 +9,7 @@ export class UpdateAccountDto extends BaseAccountDto {
       'Your account reference code identifier.' +
       'Valid characters: a-z, A-Z, 0-9, dot and hyphen',
   })
+  @IsOptional()
   @IsString()
   @MaxLength(64)
   @Matches(/^[a-zA-Z0-9.-]+$/, {
